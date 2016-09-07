@@ -1,21 +1,24 @@
 #!/usr/bin/python
 
 """
-CL_Store
+CLStore
 
 Scrapes and stores Craigslist data
 """
 
 # MODULES
 # | Native
-import json
 from time import sleep
+from os import sys, path
 
 # | Third-Party
 from craigslist import CraigslistHousing
 
 # | Custom
-import config
+# update sys.path
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+from lib.CLConfig.config import CLConfig
+from lib.cltools import CLTool
 
 # METADATA
 __author__ = 'Joshua Carlson-Purcell'
@@ -28,35 +31,55 @@ __status__ = 'Prototype'
 
 # FUNCTIONS
 
+
 def main():
+	# read in app config
+	CLConfig.readConfig()
+
 	print '==================='
 	print '   -= CLStore =-   '
 	print '==================='
 
-	print 'Starting CL_Store...'
+	print 'Starting CLStore...'
+
+	# initialize components
+	logger = CLTool.initializeLogger()
+	db_conn = CLTool.initializeDbConnection()
 
 	# create CL housing data structure
-	CLH = CraigslistHousing(site='worcester', category='apa', filters={'max_price': config.SEARCH_MAX_PRICE, 'cats_ok': True})
+	CLH = CraigslistHousing(
+		site='worcester',
+		category='apa',
+		filters={
+			'max_price': CLConfig.config['SEARCH_MAX_PRICE'],
+			'cats_ok': True
+		})
 
 	# start search query loop
+	resultCount = 0
 	while True:
 		# scrape listing
-		print ''
-		print 'Fetching listings...'
-		print ''
-		CL_results = CLH.get_results(sort_by=config.SEARCH_SORT, limit=config.SEARCH_RESULT_COUNT, geotagged=True)
+		# log start message
+		CLTool.logMsg(logger, 'Fetching listings...', 'INFO')
+		CL_results = CLH.get_results(sort_by=CLConfig.config['SEARCH_SORT'], limit=CLConfig.config['SEARCH_RESULT_COUNT'], geotagged=True)
+
+		# log status message
+		CLTool.logMsg(logger, 'Finished fetching [ %d ] result(s)' % CLConfig.config['SEARCH_RESULT_COUNT'], 'INFO')
 
 		# iterate through the results
-		resultCount = 0
 		for result in CL_results:
 			resultCount += 1
 
-			print '[ %d ] %s' % (resultCount, result['name'])
+			# log result
+			resultLogMsg = '[ Result # %d ] | [ ID: %s ] :: [ Posted: %s ] :: [ Location: %s ] :: [ Price: %s ] - %s' \
+				% (resultCount, result['id'], result['datetime'], result['where'], result['price'], result['name'])
+			CLTool.logMsg(logger, resultLogMsg, 'DEBUG')
 
 		# sleep for desired number of seconds
-		print ''
-		print 'Sleeping for [ %ds ]...' % config.QUERY_SLEEP_TIME
-		sleep(config.QUERY_SLEEP_TIME)
+		# log sleep message
+		CLTool.logMsg(logger, 'Sleeping for [ %ds ]...' % CLConfig.config['SEARCH_QUERY_SLEEP_TIME'], 'INFO')
+
+		sleep(CLConfig.config['SEARCH_QUERY_SLEEP_TIME'])
 
 if __name__ == '__main__':
 	main()
