@@ -31,6 +31,7 @@ class CLTool:
 
 	name = 'CLTools'
 	config = ''
+	logger = ''
 
 	def __init__(self):
 		"""
@@ -38,7 +39,8 @@ class CLTool:
 		:param toolName:
 		"""
 
-		pass
+		# creating logger
+		self.initializeLogger()
 
 	# LOGGING
 	def initializeLogger(self, logFile='/opt/CLTools/logs/cltools.log', logFormat='%(asctime)s [ %(levelname)s ] %(message)s', dateFormat='%m/%d/%Y %I:%M:%S %p'):
@@ -50,7 +52,7 @@ class CLTool:
 		#	* logFormat :: string :: formatting that logs message should be in :: [OPTIONAL]
 		#	* dateFormat :: string :: formatting of log timestamp, if applicable :: [OPTIONAL]
 		#
-		# Returns: Logger()
+		# Returns: NONE
 		#
 
 		# create log formatter obj
@@ -63,12 +65,10 @@ class CLTool:
 		logFileHandler.setFormatter(logFormatter)
 
 		# initialize logger
-		logger = logging.getLogger(__name__)
+		self.logger = logging.getLogger(__name__)
 
 		# associate handler with logger
-		logger.addHandler(logFileHandler)
-
-		return logger
+		self.logger.addHandler(logFileHandler)
 
 	def logMsg(self, log, logLevel):
 		#
@@ -81,18 +81,15 @@ class CLTool:
 		# Returns: NONE
 		#
 
-		# initialize logger
-		logger = logging.getLogger(__name__)
-
 		# Verbosity Level
 		# normalize log verbosity level to all uppercase
 		logLevel.upper()
 		# set numerical log level of logger based on logLevel string
 		numericalLogLevel = getattr(logging, logLevel)
-		logger.setLevel(numericalLogLevel)
+		self.logger.setLevel(numericalLogLevel)
 
 		# write log using appropriate function based on log severity level
-		getattr(logger, logLevel.lower())(log)
+		getattr(self.logger, logLevel.lower())(log)
 
 	# DATABASE
 	# initialize db connection
