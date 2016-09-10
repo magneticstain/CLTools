@@ -30,24 +30,23 @@ class CLTool:
 	"""
 
 	name = 'CLTools'
+	config = ''
 
-	def __init__(self, toolName):
+	def __init__(self):
 		"""
 		Constructor for CLTools class
 		:param toolName:
 		"""
 
-		if toolName != '' or toolName == None:
-			raise ValueError('tool name not defined')
-		else:
-			self.name = toolName
+		pass
 
 	# LOGGING
-	def initializeLogger(logFormat='%(asctime)s [ %(levelname)s ] %(message)s', dateFormat='%m/%d/%Y %I:%M:%S %p'):
+	def initializeLogger(self, logFile='/opt/CLTools/logs/cltools.log', logFormat='%(asctime)s [ %(levelname)s ] %(message)s', dateFormat='%m/%d/%Y %I:%M:%S %p'):
 		#
 		# Purpose: Define a logger object to be used for sending logs
 		#
 		# Parameters:
+		#	* logFile :: string :: file to log to :: [OPTIONAL]
 		#	* logFormat :: string :: formatting that logs message should be in :: [OPTIONAL]
 		#	* dateFormat :: string :: formatting of log timestamp, if applicable :: [OPTIONAL]
 		#
@@ -58,7 +57,7 @@ class CLTool:
 		logFormatter = logging.Formatter(fmt=logFormat, datefmt=dateFormat)
 
 		# set file handler
-		logFileHandler = logging.FileHandler(filename=config.LOG_FILE)
+		logFileHandler = logging.FileHandler(filename=logFile)
 
 		# associate file handler with Formatter
 		logFileHandler.setFormatter(logFormatter)
@@ -71,7 +70,7 @@ class CLTool:
 
 		return logger
 
-	def logMsg(logger, log, logLevel):
+	def logMsg(self, log, logLevel):
 		#
 		# Purpose: Logging strings to a given log file
 		#
@@ -97,16 +96,18 @@ class CLTool:
 
 	# DATABASE
 	# initialize db connection
-	def initializeDbConnection():
+	def initializeDbConnection(self, dbHost, dbUser, dbPass, dbName, dbPort=3306):
 		#
 		# Purpose: Create a new db connection to be used by the application
 		#
 		# Parameters:
-		#	* log :: string :: log message to be written to log file
+		#	* dbHost :: string :: hostname or IP of database server
+		#	* dbUser :: string :: db username
+		#	* dbPass :: string :: db user password
+		#	* dbName :: string :: name of database to connect to
+		#	* dbPort :: string :: network port that client should connect to on db server
 		#
 		# Returns: MySQLdb object
 		#
 
-		return MySQLdb.connect(host=config.DB_HOST, port=config.DB_PORT,
-							   user=config.DB_USER, passwd=config.DB_PASS,
-							   db=config.DB_NAME)
+		return MySQLdb.connect(host=dbHost, port=int(dbPort), user=dbUser, passwd=dbPass, db=dbName)
