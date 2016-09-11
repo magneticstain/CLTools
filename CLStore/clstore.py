@@ -11,6 +11,7 @@ Scrapes and stores Craigslist data
 from time import sleep
 from os import sys, path
 import argparse
+from MySQLdb import Error as mysqldb_error
 
 # | Third-Party
 from craigslist import CraigslistHousing
@@ -30,6 +31,7 @@ __maintainer__ = 'Joshua Carlson-Purcell'
 __email__ = 'jcarlson@carlso.net'
 __status__ = 'Prototype'
 
+
 # FUNCTIONS
 def readCLIParameters():
 	#
@@ -43,11 +45,51 @@ def readCLIParameters():
 	# read in CLI arguments using argparse
 	cliParser = argparse.ArgumentParser(description='A script for retriving and storing Craigslist listings for analysis.')
 	cliParser.add_argument('-c', '--configfile', help='Application Configuration File', required=True)
+	cliParser.add_argument(
+		'-s', '--searchsleeptime', help='Length to wait between search queries in seconds (default: 600)',
+		required=False, type=int)
 
 	# parse arguments and return them
 	return cliParser.parse_args()
 
-def startQueryFetcher(CLT, searchMaxPrice, searchSort, searchResultCnt, searchSleepTime):
+
+def sendCLResultToDB(CLT, dbConn, CLResult):
+	#
+	# Purpose: take a CL result and add/update it in the database
+	#
+	# Parameters:
+	#	* dbConn :: database connection obj
+	#	* clResult :: CL result obj
+	#
+	# Returns: NONE
+	#
+
+	# create db cursor
+	dbCursor = dbConn.cursor()
+
+	# prepare SQL
+	sql = """
+			INSERT INTO
+				listings(listing_id, post_date, url, location, price, name, geotag)
+			VALUES('%s', '%s', '%s', '%s', '%i', '%s', '%s')
+			""" % (CLResult['id'], CLResult['datetime'], CLResult['url'], CLResult['where'],
+				   int(CLResult['price'].replace('$','')), CLResult['name'], CLResult['geotag'])
+
+	# try running query
+	try:
+		dbCursor.execute(sql)
+
+		# commit the transaction
+		dbConn.commit()
+	except mysqldb_error, e:
+		# rollback transaction
+		dbConn.rollback()
+
+		# log error
+		CLT.logMsg('sendCLResultToDB() :: failed to run SQL query for CL result :: [ %s ] :: [ %s ]' % (e.message, sql), 'ERROR')
+
+
+def startQueryFetcher(dbConn, CLT, searchMaxPrice, searchSort, searchResultCnt, searchSleepTime):
 	#
 	# Purpose: query CL, scrape listings, and store them
 	#
@@ -82,18 +124,22 @@ def startQueryFetcher(CLT, searchMaxPrice, searchSort, searchResultCnt, searchSl
 			resultCount += 1
 
 			# log result
-			resultLogMsg = '[ Result # %d ] | [ ID: %s ] :: [ Posted: %s ] :: [ Location: %s ] :: [ Price: %s ] - %s' \
-				% (resultCount, result['id'], result['datetime'], result['where'], result['price'], result['name'])
+			resultLogMsg = '[ Result # %d ] | [ ID: %s ] :: [ Posted: %s ] :: [ URL: %s ] :: [ Location: %s ] :: [ Price: %s ] - %s - [ geotag: { %s } ]' \
+					% (resultCount, result['id'], result['datetime'], result['url'], result['where'], result['price'], result['name'], result['geotag'])
 			CLT.logMsg(resultLogMsg, 'DEBUG')
 
 			# send result to db
-			# TODO
+			try:
+				sendCLResultToDB(CLT, dbConn, result)
+			except Exception as e:
+				CLT.logMsg('startQueryFetcher() :: error sending CL result to database :: %s' % e.message, 'ERROR')
 
 		# sleep for desired number of seconds
 		# log sleep message
 		CLT.logMsg('Sleeping for [ %d ]...' % searchSleepTime, 'INFO')
 
 		sleep(searchSleepTime)
+
 
 def main():
 	# parse CLI params
@@ -109,6 +155,11 @@ def main():
 	searchResultCnt = int(runningConfig.config.get('search', 'search_result_count'))
 	searchSleepTime = float(runningConfig.config.get('search', 'search_query_sleep_time'))
 
+	# check if CLI params were specified
+	if cliParams.searchsleeptime:
+		# Search sleep time specified as CLI variable and should override the conf value
+		searchSleepTime = cliParams.searchsleeptime
+
 	print '==================='
 	print '   -= CLStore =-   '
 	print '==================='
@@ -118,14 +169,14 @@ def main():
 	# initialize components
 	CLT = CLTool()
 	CLT.initializeLogger(runningConfig.config.get('logging', 'log_file'))
-	db_conn = CLT.initializeDbConnection(runningConfig.config.get('database', 'db_host', 1),
+	dbConn = CLT.initializeDbConnection(runningConfig.config.get('database', 'db_host', 1),
 										 runningConfig.config.get('database', 'db_user', 1),
 										 runningConfig.config.get('database', 'db_pass', 1),
 										 runningConfig.config.get('database', 'db_name', 1),
 										 runningConfig.config.get('database', 'db_port', 1)
 	)
 
-	startQueryFetcher(CLT, searchMaxPrice, searchSort, searchResultCnt, searchSleepTime)
+	startQueryFetcher(dbConn, CLT, searchMaxPrice, searchSort, searchResultCnt, searchSleepTime)
 
 if __name__ == '__main__':
 	main()

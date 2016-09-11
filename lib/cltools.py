@@ -77,6 +77,7 @@ class CLTool:
 		# Parameters:
 		#	* log :: string :: log message to be written to log file
 		#	* logLevel :: string :: the severity level of the log to be written
+		# 		( DEBUG | INFO | WARNING | ERROR | CRITICAL )
 		#
 		# Returns: NONE
 		#
