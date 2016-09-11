@@ -53,40 +53,87 @@ def readCLIParameters():
 	return cliParser.parse_args()
 
 
-def sendCLResultToDB(CLT, dbConn, CLResult):
+def checkForListingInDB(CLT, dbConn, listingID):
 	#
-	# Purpose: take a CL result and add/update it in the database
+	# Purpose: check if a record for the given listing ID is present in the database
 	#
 	# Parameters:
+	#	* CLT :: CLTools obj for logging
 	#	* dbConn :: database connection obj
-	#	* clResult :: CL result obj
+	#	* listingID :: int :: Craigslist ID of listing
 	#
-	# Returns: NONE
+	# Returns: Bool
 	#
 
 	# create db cursor
 	dbCursor = dbConn.cursor()
 
 	# prepare SQL
-	sql = """
-			INSERT INTO
-				listings(listing_id, post_date, url, location, price, name, geotag)
-			VALUES('%s', '%s', '%s', '%s', '%i', '%s', '%s')
-			""" % (CLResult['id'], CLResult['datetime'], CLResult['url'], CLResult['where'],
-				   int(CLResult['price'].replace('$','')), CLResult['name'], CLResult['geotag'])
+	sql = """SELECT
+				id
+			FROM
+				listings
+			WHERE
+				listing_id = %d
+			LIMIT 1""" % int(listingID)
 
 	# try running query
 	try:
 		dbCursor.execute(sql)
 
-		# commit the transaction
-		dbConn.commit()
+		if dbCursor.rowcount == 1:
+			# listing already exists
+			return True
+		else:
+			return False
 	except mysqldb_error, e:
-		# rollback transaction
-		dbConn.rollback()
-
 		# log error
-		CLT.logMsg('sendCLResultToDB() :: failed to run SQL query for CL result :: [ %s ] :: [ %s ]' % (e.message, sql), 'ERROR')
+		CLT.logMsg('checkForListingInDB() :: failed to run SQL query to check if listing already exists in db :: [ %s ] :: [ %s ]' % (e.message, sql), 'ERROR')
+
+def sendCLResultToDB(CLT, dbConn, CLResult):
+	#
+	# Purpose: take a CL result and add/update it in the database
+	#
+	# Parameters:
+	#	* CLT :: CLTools obj for logging
+	#	* dbConn :: database connection obj
+	#	* clResult :: CL result obj
+	#
+	# Returns: NONE
+	#
+
+	if not checkForListingInDB(CLT, dbConn, CLResult['id']):
+		# listing is not in db yet, let's insert it
+		# create db cursor
+		dbCursor = dbConn.cursor()
+
+
+		# normalize result values
+		listingID = int(CLResult['id'].encode('ascii', 'ignore'))
+		listingPrice = int(CLResult['price'].replace('$', '').encode('ascii', 'ignore'))
+
+		# prepare SQL
+		sql = """INSERT INTO
+					listings(listing_id, post_date, url, location, price, name, geotag)
+				VALUES('%d', '%s', '%s', '%s', '%d', '%s', '%s')""" \
+			  % (int(CLResult['id']), CLResult['datetime'], CLResult['url'], CLResult['where'],
+				 int(CLResult['price'].replace('$', '')), CLResult['name'], CLResult['geotag'])
+
+		# try running query
+		try:
+			dbCursor.execute(sql)
+
+			# commit the transaction
+			dbConn.commit()
+		except mysqldb_error, e:
+			# rollback transaction
+			dbConn.rollback()
+
+			# log and return error
+			CLT.logMsg('sendCLResultToDB() :: failed to run SQL query for CL result :: [ %s ] :: [ %s ]' % (e.message, sql), 'ERROR')
+	else:
+		# log message of attempt
+		CLT.logMsg('sendCLResultToDB() :: listing already present in db :: [ ID: %s ]' % CLResult['id'], 'DEBUG')
 
 
 def startQueryFetcher(dbConn, CLT, searchMaxPrice, searchSort, searchResultCnt, searchSleepTime):
@@ -100,15 +147,15 @@ def startQueryFetcher(dbConn, CLT, searchMaxPrice, searchSort, searchResultCnt, 
 
 	# create CL Housing obj
 	CLH = CraigslistHousing(
-		site='worcester',
-		category='apa',
+		site='boston',
+		category='nfa',
 		filters={
+			'has_image': True,
 			'max_price': searchMaxPrice,
 			'cats_ok': True
 		})
 
 	# start search query loop
-	resultCount = 0
 	while True:
 		# scrape listing
 		# log start message
@@ -120,6 +167,7 @@ def startQueryFetcher(dbConn, CLT, searchMaxPrice, searchSort, searchResultCnt, 
 		CLT.logMsg('Finished fetching [ %d ] result(s)' % searchResultCnt, 'INFO')
 
 		# iterate through the results
+		resultCount = 0
 		for result in CL_results:
 			resultCount += 1
 
@@ -136,7 +184,7 @@ def startQueryFetcher(dbConn, CLT, searchMaxPrice, searchSort, searchResultCnt, 
 
 		# sleep for desired number of seconds
 		# log sleep message
-		CLT.logMsg('Sleeping for [ %d ]...' % searchSleepTime, 'INFO')
+		CLT.logMsg('Sleeping for [ %ds ]...' % searchSleepTime, 'INFO')
 
 		sleep(searchSleepTime)
 
