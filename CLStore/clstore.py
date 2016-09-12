@@ -10,11 +10,11 @@ Scrapes and stores Craigslist listings/data
 # | Native
 from time import sleep
 from os import sys, path
-import argparse
 from MySQLdb import Error as mysqldb_error
 
 # | Third-Party
 from craigslist import CraigslistHousing
+import argparse
 
 # | Custom
 # update sys.path
@@ -29,7 +29,7 @@ __license__ = 'MIT'
 __version__ = '1.0.0-alpha'
 __maintainer__ = 'Joshua Carlson-Purcell'
 __email__ = 'jcarlson@carlso.net'
-__status__ = 'Prototype'
+__status__ = 'Development'
 
 
 # FUNCTIONS
@@ -108,11 +108,6 @@ def sendCLResultToDB(CLT, dbConn, CLResult):
 		# create db cursor
 		dbCursor = dbConn.cursor()
 
-
-		# normalize result values
-		listingID = int(CLResult['id'].encode('ascii', 'ignore'))
-		listingPrice = int(CLResult['price'].replace('$', '').encode('ascii', 'ignore'))
-
 		# prepare SQL
 		sql = """INSERT INTO
 					listings(listing_id, post_date, url, location, price, name, geotag)
@@ -142,6 +137,12 @@ def startQueryFetcher(dbConn, CLH, CLT, searchSort, searchResultCnt, searchSleep
 	# Purpose: query CL, scrape listings, and store them
 	#
 	# Parameters:
+	#	* dbConn :: string :: database connection object
+	#	* CLH :: CraigslistHousing handler
+	#	* CLT :: CLTools obj for logging
+	#	* searchSort :: string :: sort method for search results
+	#	* searchResultCnt :: string :: number of search results to query for and retrieve
+	#	* searchSleepTime :: int :: number of seconds to sleep between CL search queries
 	#
 	# Returns: NONE
 	#
@@ -227,7 +228,7 @@ def main():
 		searchSleepTime = cliParams.searchsleeptime
 
 	# initialize components
-	# CL Housing obj
+	# CL Housing handler
 	CLH = CraigslistHousing(
 		site=listingRegion,
 		category=listingCatg,
