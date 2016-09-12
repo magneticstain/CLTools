@@ -137,7 +137,7 @@ def sendCLResultToDB(CLT, dbConn, CLResult):
 		CLT.logMsg('sendCLResultToDB() :: listing already present in db :: [ ID: %s ]' % CLResult['id'], 'DEBUG')
 
 
-def startQueryFetcher(dbConn, CLT, searchMaxPrice, searchSort, searchResultCnt, searchSleepTime):
+def startQueryFetcher(dbConn, CLH, CLT, searchSort, searchResultCnt, searchSleepTime):
 	#
 	# Purpose: query CL, scrape listings, and store them
 	#
@@ -145,16 +145,6 @@ def startQueryFetcher(dbConn, CLT, searchMaxPrice, searchSort, searchResultCnt, 
 	#
 	# Returns: NONE
 	#
-
-	# create CL Housing obj
-	CLH = CraigslistHousing(
-		site='boston',
-		category='nfa',
-		filters={
-			'has_image': True,
-			'max_price': searchMaxPrice,
-			'cats_ok': True
-		})
 
 	# start search query loop
 	try:
@@ -213,9 +203,12 @@ def main():
 
 	# normalize config data
 	searchSort = runningConfig.config.get('search', 'search_sort')
-	searchMaxPrice = float(runningConfig.config.get('search', 'search_max_price'))
 	searchResultCnt = int(runningConfig.config.get('search', 'search_result_count'))
 	searchSleepTime = float(runningConfig.config.get('search', 'search_query_sleep_time'))
+	listingRegion = runningConfig.config.get('listing', 'region')
+	listingCatg = runningConfig.config.get('listing', 'category')
+	listingMinPrice = runningConfig.config.get('listing', 'min_price')
+	listingMaxPrice = runningConfig.config.get('listing', 'max_price')
 
 	# check if certain CLI params were specified
 	if cliParams.searchsleeptime:
@@ -223,6 +216,17 @@ def main():
 		searchSleepTime = cliParams.searchsleeptime
 
 	# initialize components
+	# CL Housing obj
+	CLH = CraigslistHousing(
+		site=listingRegion,
+		category=listingCatg,
+		filters={
+			# uncomment below if you're a heathen who doesn't have a cat :3
+			'cats_ok': True,
+			'has_image': True,
+			'min_price': listingMinPrice,
+			'max_price': listingMaxPrice
+		})
 	CLT = CLTool()
 	CLT.initializeLogger(runningConfig.config.get('logging', 'log_file'))
 	dbConn = CLT.initializeDbConnection(runningConfig.config.get('database', 'db_host', 1),
@@ -232,7 +236,7 @@ def main():
 										 runningConfig.config.get('database', 'db_port', 1)
 	)
 
-	startQueryFetcher(dbConn, CLT, searchMaxPrice, searchSort, searchResultCnt, searchSleepTime)
+	startQueryFetcher(dbConn, CLH, CLT, searchSort, searchResultCnt, searchSleepTime)
 
 	# close db connection
 	dbConn.close()

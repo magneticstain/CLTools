@@ -43,7 +43,7 @@ class CLTool:
 		self.initializeLogger()
 
 	# LOGGING
-	def initializeLogger(self, logFile='/opt/CLTools/logs/cltools.log', logFormat='%(asctime)s [ %(levelname)s ] %(message)s', dateFormat='%m/%d/%Y %I:%M:%S %p'):
+	def initializeLogger(self, logFile='/var/log/cltools/cltools.log', logFormat='%(asctime)s [ %(levelname)s ] %(message)s', dateFormat='%m/%d/%Y %I:%M:%S %p'):
 		#
 		# Purpose: Define a logger object to be used for sending logs
 		#
