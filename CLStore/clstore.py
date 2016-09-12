@@ -157,37 +157,44 @@ def startQueryFetcher(dbConn, CLT, searchMaxPrice, searchSort, searchResultCnt, 
 		})
 
 	# start search query loop
-	while True:
-		# scrape listing
-		# log start message
-		CLT.logMsg('Fetching listings...', 'INFO')
-		# print "%s" % runningConfig.config.get('search', 'search_result_count')
-		CL_results = CLH.get_results(sort_by=searchSort, limit=searchResultCnt, geotagged=True)
+	try:
+		while True:
+			# scrape listing
+			# log start message
+			CLT.logMsg('Fetching listings...', 'INFO')
+			# print "%s" % runningConfig.config.get('search', 'search_result_count')
+			CL_results = CLH.get_results(sort_by=searchSort, limit=searchResultCnt, geotagged=True)
 
-		# log status message
-		CLT.logMsg('Finished fetching [ %d ] result(s)' % searchResultCnt, 'INFO')
+			# log status message
+			CLT.logMsg('Finished fetching [ %d ] result(s)' % searchResultCnt, 'INFO')
 
-		# iterate through the results
-		resultCount = 0
-		for result in CL_results:
-			resultCount += 1
+			# iterate through the results
+			resultCount = 0
+			for result in CL_results:
+				resultCount += 1
 
-			# log result
-			resultLogMsg = '[ Result # %d ] | [ ID: %s ] :: [ Posted: %s ] :: [ URL: %s ] :: [ Location: %s ] :: [ Price: %s ] - %s - [ geotag: { %s } ]' \
-					% (resultCount, result['id'], result['datetime'], result['url'], result['where'], result['price'], result['name'], result['geotag'])
-			CLT.logMsg(resultLogMsg, 'DEBUG')
+				# log result
+				resultLogMsg = '[ Result # %d ] | [ ID: %s ] :: [ Posted: %s ] :: [ URL: %s ] :: [ Location: %s ] :: [ Price: %s ] - %s - [ geotag: { %s } ]' \
+						% (resultCount, result['id'], result['datetime'], result['url'], result['where'], result['price'], result['name'], result['geotag'])
+				CLT.logMsg(resultLogMsg, 'DEBUG')
 
-			# send result to db
-			try:
-				sendCLResultToDB(CLT, dbConn, result)
-			except Exception as e:
-				CLT.logMsg('startQueryFetcher() :: error sending CL result to database :: %s' % e.message, 'ERROR')
+				# send result to db
+				try:
+					sendCLResultToDB(CLT, dbConn, result)
+				except Exception as e:
+					CLT.logMsg('startQueryFetcher() :: error sending CL result to database :: %s' % e.message, 'ERROR')
 
-		# sleep for desired number of seconds
-		# log sleep message
-		CLT.logMsg('Sleeping for [ %ds ]...' % searchSleepTime, 'INFO')
+			# sleep for desired number of seconds
+			# log sleep message
+			CLT.logMsg('Sleeping for [ %ds ]...' % searchSleepTime, 'INFO')
 
-		sleep(searchSleepTime)
+			sleep(searchSleepTime)
+	except KeyboardInterrupt:
+		# close db connection
+		dbConn.close()
+
+		# quit
+		sys.exit()
 
 
 def main():
@@ -226,6 +233,9 @@ def main():
 	)
 
 	startQueryFetcher(dbConn, CLT, searchMaxPrice, searchSort, searchResultCnt, searchSleepTime)
+
+	# close db connection
+	dbConn.close()
 
 if __name__ == '__main__':
 	main()
