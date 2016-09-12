@@ -197,18 +197,29 @@ def main():
 	print '==================='
 	print 'Starting CLStore...'
 
-	# read in app config
-	runningConfig = CLConfig()
-	runningConfig.readConfig(cliParams.configfile)
+	try:
+		# read in app config
+		runningConfig = CLConfig()
+		runningConfig.readConfig(cliParams.configfile)
 
-	# normalize config data
-	searchSort = runningConfig.config.get('search', 'search_sort')
-	searchResultCnt = int(runningConfig.config.get('search', 'search_result_count'))
-	searchSleepTime = float(runningConfig.config.get('search', 'search_query_sleep_time'))
-	listingRegion = runningConfig.config.get('listing', 'region')
-	listingCatg = runningConfig.config.get('listing', 'category')
-	listingMinPrice = runningConfig.config.get('listing', 'min_price')
-	listingMaxPrice = runningConfig.config.get('listing', 'max_price')
+		# normalize config data
+		searchSort = runningConfig.config.get('search', 'search_sort')
+		searchResultCnt = int(runningConfig.config.get('search', 'search_result_count'))
+		searchSleepTime = float(runningConfig.config.get('search', 'search_query_sleep_time'))
+		listingRegion = runningConfig.config.get('listing', 'region')
+		listingCatg = runningConfig.config.get('listing', 'category')
+		listingMinPrice = runningConfig.config.get('listing', 'min_price')
+		listingMaxPrice = runningConfig.config.get('listing', 'max_price')
+		dbHost = runningConfig.config.get('database', 'db_host', 1)
+		dbUser = runningConfig.config.get('database', 'db_user', 1)
+		dbPass = runningConfig.config.get('database', 'db_pass', 1)
+		dbName = runningConfig.config.get('database', 'db_name', 1)
+		dbPort = runningConfig.config.get('database', 'db_port', 1)
+		logFile = runningConfig.config.get('logging', 'log_file')
+	except Exception as e:
+		print '[CONFIG ERROR] :: could not read in configuration option :: [ %s ]' % e.message
+
+		sys.exit(1)
 
 	# check if certain CLI params were specified
 	if cliParams.searchsleeptime:
@@ -226,15 +237,11 @@ def main():
 			'has_image': True,
 			'min_price': listingMinPrice,
 			'max_price': listingMaxPrice
-		})
-	CLT = CLTool()
-	CLT.initializeLogger(runningConfig.config.get('logging', 'log_file'))
-	dbConn = CLT.initializeDbConnection(runningConfig.config.get('database', 'db_host', 1),
-										 runningConfig.config.get('database', 'db_user', 1),
-										 runningConfig.config.get('database', 'db_pass', 1),
-										 runningConfig.config.get('database', 'db_name', 1),
-										 runningConfig.config.get('database', 'db_port', 1)
+		}
 	)
+	CLT = CLTool()
+	CLT.initializeLogger(logFile)
+	dbConn = CLT.initializeDbConnection(dbHost, dbUser, dbPass, dbName, dbPort)
 
 	startQueryFetcher(dbConn, CLH, CLT, searchSort, searchResultCnt, searchSleepTime)
 
