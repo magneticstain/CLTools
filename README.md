@@ -8,6 +8,9 @@ A set of python scripts that use Craigslist to help find the perfect apartment.
 * https://github.com/juliomalegria/python-craigslist
 
 ## Usage
+```
+usage: clstore.py [-h] -c CONFIGFILE [-s SEARCHSLEEPTIME]
+```
 
 ## Services
 ### CLStore

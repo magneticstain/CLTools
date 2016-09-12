@@ -3,7 +3,7 @@
 """
 CLStore
 
-Scrapes and stores Craigslist data
+Scrapes and stores Craigslist listings/data
 """
 
 # MODULES
@@ -89,6 +89,7 @@ def checkForListingInDB(CLT, dbConn, listingID):
 	except mysqldb_error, e:
 		# log error
 		CLT.logMsg('checkForListingInDB() :: failed to run SQL query to check if listing already exists in db :: [ %s ] :: [ %s ]' % (e.message, sql), 'ERROR')
+
 
 def sendCLResultToDB(CLT, dbConn, CLResult):
 	#
@@ -193,6 +194,12 @@ def main():
 	# parse CLI params
 	cliParams = readCLIParameters()
 
+	# print display heading
+	print '==================='
+	print '   -= CLStore =-   '
+	print '==================='
+	print 'Starting CLStore...'
+
 	# read in app config
 	runningConfig = CLConfig()
 	runningConfig.readConfig(cliParams.configfile)
@@ -203,16 +210,10 @@ def main():
 	searchResultCnt = int(runningConfig.config.get('search', 'search_result_count'))
 	searchSleepTime = float(runningConfig.config.get('search', 'search_query_sleep_time'))
 
-	# check if CLI params were specified
+	# check if certain CLI params were specified
 	if cliParams.searchsleeptime:
-		# Search sleep time specified as CLI variable and should override the conf value
+		# search sleep time specified as CLI variable and should override the conf value
 		searchSleepTime = cliParams.searchsleeptime
-
-	print '==================='
-	print '   -= CLStore =-   '
-	print '==================='
-
-	print 'Starting CLStore...'
 
 	# initialize components
 	CLT = CLTool()
