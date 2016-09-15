@@ -1,11 +1,15 @@
 # CLTools
 A set of python scripts that use Craigslist to help find the perfect apartment.
 
-## Inspired 
+## Inspired By
 * https://www.dataquest.io/blog/apartment-finding-slackbot/
 
 ## Requirements
 * https://github.com/juliomalegria/python-craigslist
+* python mysqldb
+  * `pip install MySQL-python`
+* Debian
+  * libmysqlclient-dev
 
 ## Usage
 ```
