@@ -20,7 +20,7 @@ import argparse
 # update sys.path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from lib.clconfig import CLConfig
-from lib.cltools import CLTool
+from lib.cllogging import CLLogging
 
 # METADATA
 __author__ = 'Joshua Carlson-Purcell'
@@ -53,12 +53,12 @@ def readCLIParameters():
 	return cliParser.parse_args()
 
 
-def checkForListingInDB(CLT, dbConn, listingID):
+def checkForListingInDB(CLL, dbConn, listingID):
 	#
 	# Purpose: check if a record for the given listing ID is present in the database
 	#
 	# Parameters:
-	#	* CLT :: CLTools obj for logging
+	#	* CLL :: CLLogging obj for logging
 	#	* dbConn :: database connection obj
 	#	* listingID :: int :: Craigslist ID of listing
 	#
@@ -88,22 +88,22 @@ def checkForListingInDB(CLT, dbConn, listingID):
 			return False
 	except mysqldb_error, e:
 		# log error
-		CLT.logMsg('checkForListingInDB() :: failed to run SQL query to check if listing already exists in db :: [ %s ] :: [ %s ]' % (e.message, sql), 'ERROR')
+		CLL.logMsg('checkForListingInDB() :: failed to run SQL query to check if listing already exists in db :: [ %s ] :: [ %s ]' % (e.message, sql), 'ERROR')
 
 
-def sendCLResultToDB(CLT, dbConn, CLResult):
+def sendCLResultToDB(CLL, dbConn, CLResult):
 	#
 	# Purpose: take a CL result and add/update it in the database
 	#
 	# Parameters:
-	#	* CLT :: CLTools obj for logging
+	#	* CLL :: CLLogging obj for logging
 	#	* dbConn :: database connection obj
 	#	* clResult :: CL result obj
 	#
 	# Returns: NONE
 	#
 
-	if not checkForListingInDB(CLT, dbConn, CLResult['id']):
+	if not checkForListingInDB(CLL, dbConn, CLResult['id']):
 		# listing is not in db yet, let's insert it
 		# create db cursor
 		dbCursor = dbConn.cursor()
@@ -126,20 +126,20 @@ def sendCLResultToDB(CLT, dbConn, CLResult):
 			dbConn.rollback()
 
 			# log and return error
-			CLT.logMsg('sendCLResultToDB() :: failed to run SQL query for CL result :: [ %s ] :: [ %s ]' % (e.message, sql), 'ERROR')
+			CLL.logMsg('sendCLResultToDB() :: failed to run SQL query for CL result :: [ %s ] :: [ %s ]' % (e.message, sql), 'ERROR')
 	else:
 		# log message of attempt
-		CLT.logMsg('sendCLResultToDB() :: listing already present in db :: [ ID: %s ]' % CLResult['id'], 'DEBUG')
+		CLL.logMsg('sendCLResultToDB() :: listing already present in db :: [ ID: %s ]' % CLResult['id'], 'DEBUG')
 
 
-def startQueryFetcher(dbConn, CLH, CLT, searchSort, searchResultCnt, searchSleepTime):
+def startQueryFetcher(dbConn, CLH, CLL, searchSort, searchResultCnt, searchSleepTime):
 	#
 	# Purpose: query CL, scrape listings, and store them
 	#
 	# Parameters:
 	#	* dbConn :: string :: database connection object
 	#	* CLH :: CraigslistHousing handler
-	#	* CLT :: CLTools obj for logging
+	#	* CLL :: CLLogging obj for logging
 	#	* searchSort :: string :: sort method for search results
 	#	* searchResultCnt :: string :: number of search results to query for and retrieve
 	#	* searchSleepTime :: int :: number of seconds to sleep between CL search queries
@@ -152,12 +152,12 @@ def startQueryFetcher(dbConn, CLH, CLT, searchSort, searchResultCnt, searchSleep
 		while True:
 			# scrape listing
 			# log start message
-			CLT.logMsg('Fetching listings...', 'INFO')
+			CLL.logMsg('Fetching listings...', 'INFO')
 			# print "%s" % runningConfig.config.get('search', 'search_result_count')
 			CL_results = CLH.get_results(sort_by=searchSort, limit=searchResultCnt, geotagged=True)
 
 			# log status message
-			CLT.logMsg('Finished fetching [ %d ] result(s)' % searchResultCnt, 'INFO')
+			CLL.logMsg('Finished fetching [ %d ] result(s)' % searchResultCnt, 'INFO')
 
 			# iterate through the results
 			resultCount = 0
@@ -167,17 +167,17 @@ def startQueryFetcher(dbConn, CLH, CLT, searchSort, searchResultCnt, searchSleep
 				# log result
 				resultLogMsg = '[ Result # %d ] | [ ID: %s ] :: [ Posted: %s ] :: [ URL: %s ] :: [ Location: %s ] :: [ Price: %s ] - %s - [ geotag: { %s } ]' \
 						% (resultCount, result['id'], result['datetime'], result['url'], result['where'], result['price'], result['name'], result['geotag'])
-				CLT.logMsg(resultLogMsg, 'DEBUG')
+				CLL.logMsg(resultLogMsg, 'DEBUG')
 
 				# send result to db
 				try:
-					sendCLResultToDB(CLT, dbConn, result)
+					sendCLResultToDB(CLL, dbConn, result)
 				except Exception as e:
-					CLT.logMsg('startQueryFetcher() :: error sending CL result to database :: %s' % e.message, 'ERROR')
+					CLL.logMsg('startQueryFetcher() :: error sending CL result to database :: %s' % e.message, 'ERROR')
 
 			# sleep for desired number of seconds
 			# log sleep message
-			CLT.logMsg('Sleeping for [ %ds ]...' % searchSleepTime, 'INFO')
+			CLL.logMsg('Sleeping for [ %ds ]...' % searchSleepTime, 'INFO')
 
 			sleep(searchSleepTime)
 	except KeyboardInterrupt:
@@ -240,11 +240,11 @@ def main():
 			'max_price': listingMaxPrice
 		}
 	)
-	CLT = CLTool()
-	CLT.initializeLogger(logFile)
-	dbConn = CLT.initializeDbConnection(dbHost, dbUser, dbPass, dbName, dbPort)
+	CLL = CLLogging()
+	CLL.initializeLogger(logFile)
+	dbConn = CLL.initializeDbConnection(dbHost, dbUser, dbPass, dbName, dbPort)
 
-	startQueryFetcher(dbConn, CLH, CLT, searchSort, searchResultCnt, searchSleepTime)
+	startQueryFetcher(dbConn, CLH, CLL, searchSort, searchResultCnt, searchSleepTime)
 
 	# close db connection
 	dbConn.close()

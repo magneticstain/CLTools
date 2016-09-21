@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
 """
-CLTools
+CLLog
 
-Main class for CLTools components
+Main class for CLTools logging components
 """
 
 # MODULES
@@ -24,25 +24,24 @@ __maintainer__ = 'Joshua Carlson-Purcell'
 __email__ = 'jcarlson@carlso.net'
 __status__ = 'Prototype'
 
-class CLTool:
+class CLLogging:
 	""""
-	Base class for components of the CLTool suite
+	Main class for CLTools logging components
 	"""
 
-	name = 'CLTools'
+	name = 'CLLogging'
 	config = ''
 	logger = ''
 
 	def __init__(self):
 		"""
-		Constructor for CLTools class
+		Constructor for CLLogging class
 		:param toolName:
 		"""
 
 		# creating logger
 		self.initializeLogger()
 
-	# LOGGING
 	def initializeLogger(self, logFile='/var/log/cltools/cltools.log', logFormat='%(asctime)s [ %(levelname)s ] %(message)s', dateFormat='%m/%d/%Y %I:%M:%S %p'):
 		#
 		# Purpose: Define a logger object to be used for sending logs
