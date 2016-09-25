@@ -44,18 +44,26 @@ namespace CLTools\CLData;
 			 *  Returns: private obj var
 			 */
 
+			$dataSet = $this->data;
+
+			// strip primary key (id) from dataset (it's preferred not to leak this information from a security standpoint)
+			if(isset($dataSet['id']))
+			{
+				unset($dataSet['id']);
+			}
+
 			if($this->dataField === '' || $this->dataField === '*')
 			{
-				return $this->data;
+				return $dataSet;
 			}
 
 			// if a field name is set, return only that
-			if(!array_key_exists($this->dataField, $this->data))
+			if(!array_key_exists($this->dataField, $dataSet))
 			{
 				return [];
 			}
 
-			return $this->data[$this->dataField];
+			return $dataSet[$this->dataField];
 		}
 
 		# OTHER FUNCTIONS

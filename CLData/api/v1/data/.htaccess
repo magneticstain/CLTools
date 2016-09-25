@@ -1,0 +1,10 @@
+# Rewrite paste requests
+RewriteEngine On
+
+RewriteCond %{SCRIPT_FILENAME} !-d
+RewriteCond %{SCRIPT_FILENAME} !-f
+RewriteCond %{REQUEST_URI} !(\.css|\.js|\.png|\.jpg|\.gif|robots\.txt)$ [NC]
+
+
+RewriteRule ^([^/]*)/$ /CLTools/CLData/api/v1/data/index.php?lid=$1 [L]
+RewriteRule ^([^/]*)/([^/]*)/$ /CLTools/CLData/api/v1/data/index.php?lid=$1&f=$2 [L]
