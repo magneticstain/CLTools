@@ -20,6 +20,9 @@ namespace CLTools\CLData;
 		{
 			// no sanatizing is really needed because mysql and its drivers/libraries should do all the sanatizing we need
 			$this->dbConnConfig = $dbConnConfig;
+
+			// start db connection
+			$this->connectToDb();
 		}
 
 		# OTHER FUNCTIONS
@@ -43,6 +46,54 @@ namespace CLTools\CLData;
 
 			// create PDO object using db config data and return it to the user
 			return new \PDO($dsn, $this->dbConnConfig['dbUser'], $this->dbConnConfig['dbPass'], $pdoOpts);
+		}
+
+		public function disconnectFromDb()
+		{
+			/*
+			 *  Purpose: destroys connection to CLTools db
+			 *
+			 *  Params: NONE
+			 *
+			 *  Returns: bool
+			 */
+
+			// set connection variable to NULL, per PHP docs - http://php.net/manual/en/pdo.connections.php
+			$this->dbConn = null;
+		}
+
+		public function retrieveListingArtifactFromDb($listingID, $field)
+		{
+			/*
+			 *  Purpose: retrieve specific listing data from database
+			 *
+			 *  Params:
+			 * 		* $listingID :: int :: primary ID of listing record to retrieve field data from
+			 * 		* $field :: string :: corresponds to database table column name of given record matching listing ID
+			 *
+			 *  Returns: array
+			 */
+
+			// craft sql query
+			$sql = '
+					SELECT
+						:field
+					FROM
+						listings
+					WHERE
+						listing_id = :listingID
+					LIMIT 1
+			';
+
+			// prepare query and execute it
+			$sqlStmt = $this->dbConn->prepare($sql);
+			$sqlStmt->execute([
+				'field'		=>	$field,
+				'listingID'	=> $listingID
+			]);
+
+			// fetch results and return them
+			return $sqlStmt->fetch();
 		}
 	}
 
