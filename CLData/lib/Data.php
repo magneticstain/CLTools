@@ -15,14 +15,47 @@ namespace CLTools\CLData;
 	{
 		public $dbConn = '';
 		private $dbConnConfig = array();
+		public $listingID = 0;
+		public $dataField = '';
+		private $data = array();
 
-		public function __construct($dbConnConfig)
+		public function __construct($dbConnConfig, $listingID = 0, $dataField = '*')
 		{
 			// no sanatizing is really needed because mysql and its drivers/libraries should do all the sanatizing we need
 			$this->dbConnConfig = $dbConnConfig;
 
 			// start db connection
 			$this->connectToDb();
+
+			// set local vars
+			$this->listingID = $listingID;
+			$this->dataField = $dataField;
+		}
+
+		# GETTERS
+		public function getData()
+		{
+			/*
+			 *  Purpose: getter for private data variable
+			 *
+			 *  Params:
+			 * 		* $field :: field name of data to specifically return :: [ OPT ]
+			 *
+			 *  Returns: private obj var
+			 */
+
+			if($this->dataField === '' || $this->dataField === '*')
+			{
+				return $this->data;
+			}
+
+			// if a field name is set, return only that
+			if(!array_key_exists($this->dataField, $this->data))
+			{
+				return [];
+			}
+
+			return $this->data[$this->dataField];
 		}
 
 		# OTHER FUNCTIONS
@@ -33,11 +66,13 @@ namespace CLTools\CLData;
 			 *
 			 *  Params: NONE
 			 *
-			 *  Returns: PDO object
+			 *  Returns: NONE
 			 */
 
 			// generate DSN
 			$dsn = 'mysql:host='.$this->dbConnConfig['dbHost'].';dbname='.$this->dbConnConfig['dbName'].';port='.$this->dbConnConfig['dbPort'].';charset=utf8';
+
+			// set PDO options
 			$pdoOpts = [
 				\PDO::ATTR_ERRMODE              =>  \PDO::ERRMODE_EXCEPTION,
 				\PDO::ATTR_DEFAULT_FETCH_MODE   =>  \PDO::FETCH_ASSOC,
@@ -45,7 +80,7 @@ namespace CLTools\CLData;
 			];
 
 			// create PDO object using db config data and return it to the user
-			return new \PDO($dsn, $this->dbConnConfig['dbUser'], $this->dbConnConfig['dbPass'], $pdoOpts);
+			$this->dbConn = new \PDO($dsn, $this->dbConnConfig['dbUser'], $this->dbConnConfig['dbPass'], $pdoOpts);
 		}
 
 		public function disconnectFromDb()
@@ -62,14 +97,13 @@ namespace CLTools\CLData;
 			$this->dbConn = null;
 		}
 
-		public function retrieveListingArtifactFromDb($listingID, $field)
+		public function retrieveListingFromDb($resultFormat = \PDO::FETCH_ASSOC)
 		{
 			/*
-			 *  Purpose: retrieve specific listing data from database
+			 *  Purpose: retrieve listing data from database
 			 *
 			 *  Params:
-			 * 		* $listingID :: int :: primary ID of listing record to retrieve field data from
-			 * 		* $field :: string :: corresponds to database table column name of given record matching listing ID
+			 * 		* $resultFormat :: format to set fetched data in :: [ OPT ]
 			 *
 			 *  Returns: array
 			 */
@@ -77,7 +111,7 @@ namespace CLTools\CLData;
 			// craft sql query
 			$sql = '
 					SELECT
-						:field
+						*
 					FROM
 						listings
 					WHERE
@@ -85,15 +119,17 @@ namespace CLTools\CLData;
 					LIMIT 1
 			';
 
-			// prepare query and execute it
+			// prepare query
 			$sqlStmt = $this->dbConn->prepare($sql);
-			$sqlStmt->execute([
-				'field'		=>	$field,
-				'listingID'	=> $listingID
-			]);
 
-			// fetch results and return them
-			return $sqlStmt->fetch();
+			// bind listing ID param
+			$sqlStmt->bindValue(':listingID', $this->listingID, \PDO::PARAM_INT);
+
+			// execute query
+			$sqlStmt->execute();
+
+			// fetch results
+			$this->data = $sqlStmt->fetch($resultFormat);
 		}
 	}
 

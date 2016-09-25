@@ -21,25 +21,61 @@ namespace CLTools\CLData;
 	require $BASE_URL.'/lib/Autoloader.php';
 	require $BASE_URL.'/conf/db.php';
 
-	// start data engine
-	try {
-		$data = new Data($DB_CONFIG_OPTIONS);
-	} catch(\Exception $e) {
-		error_log('CLTools :: CLData :: [ FATAL ] :: could not start data engine :: '.$e->getMessage());
-
-		echo "[ FATAL ERROR ] :: CLData DATA ENGINE UNAVAILABLE";
-	}
-
-	// gather fields and options
-	$field = '';
-	$options = array();
-	if(isset($_GET['field']) && !empty($_GET['field']))
+	// gather identifiers, fields, and options
+	// listing ID
+	$listingID = $_GET['lid'];
+	if(empty($listingID))
 	{
-		$field = $_GET['field'];
+		echo json_encode([
+			'success'	=>	false,
+			'error' => 'no listing ID supplied'
+		]);
+
+		exit();
 	}
+	// field name
+	if(isset($_GET['f']) && !empty($_GET['f']))
+	{
+		$field = $_GET['f'];
+	}
+	else
+	{
+		$field = '*';
+	}
+	$options = array();
 	// TODO: options
 
-	// retrieve data
+	// start data engine
+	try {
+		$data = new Data($DB_CONFIG_OPTIONS, $listingID, $field);
+	} catch(\Exception $e) {
+		error_log('CLTools :: CLData :: [ SEV: FATAL ] :: [ LID: '.$listingID.' ] :: could not start data engine :: [ FIELD: '.$field.' ] :: [ MSG: '.$e->getMessage().' ]');
+
+		echo json_encode([
+			'success'	=>	false,
+			'error' => 'could not start data engine'
+		]);
+
+		exit(1);
+	}
+
+	// fetch data from db (stored in private variable in Data() obj)
+	try {
+		$data->retrieveListingFromDb();
+	} catch(\Exception $e) {
+		error_log('CLTools :: CLData :: [ SEV: ERROR ] :: [ LID: '.$listingID.' ] :: could not query database for listing :: [ FIELD: '.$field.' ] :: [ MSG: '.$e->getMessage().' ]');
+
+		echo json_encode([
+			'success'	=>	false,
+			'error' => 'could not query database for provided field'
+		]);
+
+		exit();
+	}
 
 	// return data as json
+	echo json_encode([
+		'success'	=>	true,
+		'data'		=>	$data->getData()
+	]);
 ?>
