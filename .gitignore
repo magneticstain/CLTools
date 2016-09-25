@@ -88,5 +88,6 @@ ENV/
 .ropeproject
 .idea/
 
-# Project DB settings
+# Project conf settings
 db.php
+main_dev.cfg
