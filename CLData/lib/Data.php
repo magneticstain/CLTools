@@ -51,18 +51,28 @@ namespace CLTools\CLData;
 			{
 				unset($dataSet['id']);
 			}
+			elseif(isset($dataSet[0]['id']))
+			{
+				// multiple listings included; traverse over each one separately and remove its ID field from the dataset
+				foreach($dataSet as $key => $listing)
+				{
+					unset($dataSet[$key]['id']);
+				}
+			}
 
+			// return all info if no field name is specified
 			if($this->dataField === '' || $this->dataField === '*')
 			{
 				return $dataSet;
 			}
 
-			// if a field name is set, return only that
+			// if a field name is set, but doesn't exist, return a blank array
 			if(!array_key_exists($this->dataField, $dataSet))
 			{
 				return [];
 			}
 
+			// the default option is to return the most specific data possible
 			return $dataSet[$this->dataField];
 		}
 
@@ -117,27 +127,51 @@ namespace CLTools\CLData;
 			 */
 
 			// craft sql query
-			$sql = '
-					SELECT
-						*
-					FROM
-						listings
-					WHERE
-						listing_id = :listingID
-					LIMIT 1
-			';
+			if(isset($this->listingID) && !empty($this->listingID) && $this->listingID !== 0)
+			{
+				$sql = '
+						SELECT
+							*
+						FROM
+							listings
+						WHERE
+							listing_id = :listingID
+						LIMIT 1
+				';
 
-			// prepare query
-			$sqlStmt = $this->dbConn->prepare($sql);
+				// prepare query
+				$sqlStmt = $this->dbConn->prepare($sql);
 
-			// bind listing ID param
-			$sqlStmt->bindValue(':listingID', $this->listingID, \PDO::PARAM_INT);
+				// bind listing ID param
+				$sqlStmt->bindValue(':listingID', $this->listingID, \PDO::PARAM_INT);
 
-			// execute query
-			$sqlStmt->execute();
+				// execute query
+				$sqlStmt->execute();
 
-			// fetch results
-			$this->data = $sqlStmt->fetch($resultFormat);
+				// fetch results
+				$this->data = $sqlStmt->fetch($resultFormat);
+			}
+			else
+			{
+				// no listing ID set, retrieve last 5 listings by date
+				$sql = '
+						SELECT
+							*
+						FROM
+							listings
+						ORDER BY post_date DESC
+						LIMIT 5
+				';
+
+				// prepare query
+				$sqlStmt = $this->dbConn->prepare($sql);
+
+				// execute query
+				$sqlStmt->execute();
+
+				// fetch results
+				$this->data = $sqlStmt->fetchAll($resultFormat);
+			}
 		}
 	}
 

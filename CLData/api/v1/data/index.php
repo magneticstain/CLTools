@@ -24,15 +24,15 @@ namespace CLTools\CLData;
 	// gather identifiers, fields, and options
 	// listing ID
 	$listingID = $_GET['lid'];
-	if(empty($listingID))
-	{
-		echo json_encode([
-			'success'	=>	false,
-			'error' => 'no listing ID supplied'
-		]);
-
-		exit();
-	}
+//	if(empty($listingID))
+//	{
+//		echo json_encode([
+//			'success'	=>	false,
+//			'error' => 'no listing ID supplied'
+//		]);
+//
+//		exit();
+//	}
 	// field name
 	if(isset($_GET['f']) && !empty($_GET['f']))
 	{
