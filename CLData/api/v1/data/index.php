@@ -21,18 +21,12 @@ namespace CLTools\CLData;
 	require $BASE_URL.'/lib/Autoloader.php';
 	require $BASE_URL.'/conf/db.php';
 
+	// set content-type
+	header('Content-Type: application/json');
+
 	// gather identifiers, fields, and options
 	// listing ID
 	$listingID = $_GET['lid'];
-//	if(empty($listingID))
-//	{
-//		echo json_encode([
-//			'success'	=>	false,
-//			'error' => 'no listing ID supplied'
-//		]);
-//
-//		exit();
-//	}
 	// field name
 	if(isset($_GET['f']) && !empty($_GET['f']))
 	{
@@ -42,8 +36,33 @@ namespace CLTools\CLData;
 	{
 		$field = '*';
 	}
-	$options = array();
-	// TODO: options
+	// order by field
+	if(isset($_GET['o']))
+	{
+		$sortOrderOpt = $_GET['o'];
+	}
+	else
+	{
+		$sortOrderOpt = '';
+	}
+	// sort order of dataset
+	if(isset($_GET['s']))
+	{
+		$sortOrder = $_GET['s'];
+	}
+	else
+	{
+		$sortOrder = 'asc';
+	}
+	// result limit
+	if(isset($_GET['l']))
+	{
+		$limit = $_GET['l'];
+	}
+	else
+	{
+		$limit = 0;
+	}
 
 	// start data engine
 	try {
@@ -51,17 +70,15 @@ namespace CLTools\CLData;
 	} catch(\Exception $e) {
 		error_log('CLTools :: CLData :: [ SEV: FATAL ] :: [ LID: '.$listingID.' ] :: could not start data engine :: [ FIELD: '.$field.' ] :: [ MSG: '.$e->getMessage().' ]');
 
-		echo json_encode([
-			'success'	=>	false,
-			'error' => 'could not start data engine'
-		]);
+		// throw 503 error
+		http_response_code(503);
 
 		exit(1);
 	}
 
 	// fetch data from db (stored in private variable in Data() obj)
 	try {
-		$data->retrieveListingFromDb();
+		$data->retrieveListingFromDb($sortOrderOpt, $sortOrder, $limit);
 	} catch(\Exception $e) {
 		error_log('CLTools :: CLData :: [ SEV: ERROR ] :: [ LID: '.$listingID.' ] :: could not query database for listing :: [ FIELD: '.$field.' ] :: [ MSG: '.$e->getMessage().' ]');
 

@@ -30,6 +30,8 @@ namespace CLTools\CLData;
 			// set local vars
 			$this->listingID = $listingID;
 			$this->dataField = $dataField;
+
+//			throw new \Exception('testing');
 		}
 
 		# GETTERS
@@ -38,8 +40,7 @@ namespace CLTools\CLData;
 			/*
 			 *  Purpose: getter for private data variable
 			 *
-			 *  Params:
-			 * 		* $field :: field name of data to specifically return :: [ OPT ]
+			 *  Params: NONE
 			 *
 			 *  Returns: private obj var
 			 */
@@ -61,7 +62,7 @@ namespace CLTools\CLData;
 			}
 
 			// return all info if no field name is specified
-			if($this->dataField === '' || $this->dataField === '*')
+			if($this->dataField === '' || $this->dataField === '*' || 1 < count($dataSet))
 			{
 				return $dataSet;
 			}
@@ -115,20 +116,76 @@ namespace CLTools\CLData;
 			$this->dbConn = null;
 		}
 
-		public function retrieveListingFromDb($resultFormat = \PDO::FETCH_ASSOC)
+		public function retrieveListingFromDb($sortOpt = 'post_date', $sortOrder = 'desc', $resultLimit = 10, $resultFormat = \PDO::FETCH_ASSOC)
 		{
 			/*
 			 *  Purpose: retrieve listing data from database
 			 *
 			 *  Params:
-			 * 		* $resultFormat :: format to set fetched data in :: [ OPT ]
+			 * 		* $sortOpt :: field to sort results by
+			 * 		* $sortOrder :: order to sort results by
+			 * 		* $resultLimit :: max number of records to return
+			 * 		* $resultFormat :: format to set fetched data in
 			 *
 			 *  Returns: array
 			 */
 
-			// craft sql query
-			if(isset($this->listingID) && !empty($this->listingID) && $this->listingID !== 0)
+			// list and set approved sort and sort order options
+			$sortOpts = ['listing_id', 'post_date', 'location', 'price'];
+			$sortOrderOpts = ['asc', 'desc'];
+			$sortSqlClause = '';
+			if(in_array($sortOpt, $sortOpts, true) || (0 < $sortOpt && $sortOpt <= 50))
 			{
+				$sortSqlClause = 'ORDER BY '.$sortOpt;
+
+				// check for sort order option
+				if(in_array(strtolower($sortOrder), $sortOrderOpts, true))
+				{
+					$sortSqlClause .= ' '.strtoupper($sortOrder);
+				}
+			}
+			// validate given limit
+			$limitSqlClause = '';
+			if(0 < $resultLimit)
+			{
+				$limitSqlClause = 'LIMIT '.$resultLimit;
+			}
+
+			if(strtolower($this->listingID === 'all'))
+			{
+				// check if all fields were requested or a specific one
+				if(!empty($this->dataField) && $this->dataField !== '*' && $this->dataField !== 'listing_id')
+				{
+					$sqlSelectClause = 'listing_id, '.$this->dataField;
+				}
+				else
+				{
+					$sqlSelectClause = '*';
+				}
+
+				// fetch all (max 5k) listings
+				$sql = '
+						SELECT
+							'.$sqlSelectClause.'
+						FROM
+							listings
+						'.$sortSqlClause.'
+						'.$limitSqlClause.'
+				';
+//				echo $sql;
+
+				// prepare query
+				$sqlStmt = $this->dbConn->prepare($sql);
+
+				// execute query
+				$sqlStmt->execute();
+
+				// fetch results
+				$this->data = $sqlStmt->fetchAll($resultFormat);
+			}
+			elseif(isset($this->listingID) && !empty($this->listingID) && $this->listingID !== 0)
+			{
+				// fetch specific listing
 				$sql = '
 						SELECT
 							*
@@ -159,7 +216,6 @@ namespace CLTools\CLData;
 							*
 						FROM
 							listings
-						ORDER BY post_date DESC
 						LIMIT 5
 				';
 
