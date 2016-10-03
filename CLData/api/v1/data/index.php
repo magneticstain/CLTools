@@ -79,6 +79,15 @@ namespace CLTools\CLData;
 	// fetch data from db (stored in private variable in Data() obj)
 	try {
 		$data->retrieveListingFromDb($sortOrderOpt, $sortOrder, $limit);
+
+		// verify data was received
+		if($data->getData() === false)
+		{
+			// data not found, return 404
+			http_response_code(404);
+
+			exit();
+		}
 	} catch(\Exception $e) {
 		error_log('CLTools :: CLData :: [ SEV: ERROR ] :: [ LID: '.$listingID.' ] :: could not query database for listing :: [ FIELD: '.$field.' ] :: [ MSG: '.$e->getMessage().' ]');
 

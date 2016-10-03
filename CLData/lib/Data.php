@@ -116,7 +116,11 @@ namespace CLTools\CLData;
 			$this->dbConn = null;
 		}
 
-		public function retrieveListingFromDb($sortOpt = 'post_date', $sortOrder = 'desc', $resultLimit = 10, $resultFormat = \PDO::FETCH_ASSOC)
+		public function retrieveListingFromDb(
+			$sortOpt = 'post_date',
+			$sortOrder = 'desc',
+			$resultLimit = 10,
+			$resultFormat = \PDO::FETCH_ASSOC)
 		{
 			/*
 			 *  Purpose: retrieve listing data from database
@@ -151,6 +155,7 @@ namespace CLTools\CLData;
 				$limitSqlClause = 'LIMIT '.$resultLimit;
 			}
 
+			// fetch listings
 			if(strtolower($this->listingID === 'all'))
 			{
 				// check if all fields were requested or a specific one
