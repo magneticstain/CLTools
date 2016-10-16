@@ -70,7 +70,7 @@ namespace CLTools\CLData;
 	} catch(\Exception $e) {
 		error_log('CLTools :: CLData :: [ SEV: FATAL ] :: [ LID: '.$listingID.' ] :: could not start data engine :: [ FIELD: '.$field.' ] :: [ MSG: '.$e->getMessage().' ]');
 
-		// throw 503 error
+		// throw 503 status
 		http_response_code(503);
 
 		exit(1);
@@ -83,7 +83,7 @@ namespace CLTools\CLData;
 		// verify data was received
 		if($data->getData() === false)
 		{
-			// data not found, return 404
+			// data not found, return 404 status
 			http_response_code(404);
 
 			exit();

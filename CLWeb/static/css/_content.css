@@ -1,0 +1,19 @@
+/*
+    CLWeb // _content.css
+
+    Stylesheet including styles used for all primary content
+*/
+
+#map {
+    background: #E5E3DF;
+    height: 640px;
+    width: 100%;
+}
+
+#map .errorWrapper {
+    font: 48px 'Bungee Inline', cursive;
+    margin: 8% auto;
+    /*padding: 25px;*/
+    text-align: center;
+    width: 64%;
+}

@@ -1,0 +1,34 @@
+/*
+    CLWeb // _footer.css
+
+    Stylesheet including all footer-related styles
+*/
+
+footer .sectionWrapper {
+    background: #95ADB6;
+    border-top: 2px solid #3C92CA;
+    font: 24px 'Dosis', sans-serif;
+    padding: 36px;
+    text-align: center;
+}
+
+footer .linkWrapper {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.linkWrapper a:link {
+    color: #EFEFEF;
+    letter-spacing: 2px;
+    margin: 0 5px;
+    padding: 2px;
+    text-decoration: none;
+}
+
+.linkWrapper a:hover {
+    border-bottom: 4px solid;
+}
+
+.linkWrapper a:visited {
+    color: #EFEFEF;
+}

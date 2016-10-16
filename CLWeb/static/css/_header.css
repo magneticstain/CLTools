@@ -1,0 +1,22 @@
+/*
+    CLWeb // _header.css
+
+    Stylesheet including all header-related styles
+*/
+
+header div {
+    background: #EFEFEF;
+    border-bottom: 2px solid #3C92CA;
+    padding: 16px;
+}
+
+header div * {
+    vertical-align: middle;
+}
+
+header div h1 {
+    display: inline-block;
+    font: 32px 'Maven Pro', sans-serif;
+    letter-spacing: 2px;
+    margin: 0 16px;
+}

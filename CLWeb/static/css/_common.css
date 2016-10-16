@@ -1,0 +1,15 @@
+/*
+    CLWeb // _common.css
+
+    Stylesheet including all commonly-used styles, both frequently and in many facets
+*/
+
+.accent {
+    color: #3C92CA;
+    display: inline-block;
+    vertical-align: baseline;
+}
+
+.error {
+    color: #CD5334;
+}

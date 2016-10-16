@@ -1,0 +1,10 @@
+/*
+    CLWeb // _fonts.css
+
+    Stylesheet where custom fonts are imported for use
+*/
+
+@font-face {
+    font-family: 'Maven Pro';
+    src: url('/CLTools/CLWeb/static/media/fonts/maven_pro/MavenPro-Regular.ttf');
+}

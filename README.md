@@ -6,6 +6,7 @@ A set of python scripts that use Craigslist to help find the perfect apartment.
 
 ## Requirements
 * https://github.com/juliomalegria/python-craigslist
+  * `pip install python-craigslist`
 * python mysqldb
   * `pip install MySQL-python`
 * Debian
