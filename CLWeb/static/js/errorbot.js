@@ -47,7 +47,7 @@ ErrorBot.prototype.setErrorModalHTML = function(){
     // sets the inner html of the error modal
     var formattedErrorMsg = '!';
 
-    errorModal.html('<img src="/CLTools/CLWeb/static/media/icons/status/' + errorSeverities[this.severity].toLowerCase() + '.png" rel="' + errorSeverities[this.severity] + ' ERROR"><p>' + this.msg + '!</p>');
+    errorModal.html('<img src="/CLTools/CLWeb/static/media/icons/status/' + errorSeverities[this.severity].toLowerCase() + '.png" title="' + errorSeverities[this.severity] + '" alt="' + errorSeverities[this.severity] + ' status icon"><p>' + this.msg + '!</p>');
 };
 
 ErrorBot.prototype.displayError = function(delayTimeMS){

@@ -38,16 +38,12 @@ DataTron.prototype.setListingsAsMarkers = function(map){
                     // if geotag exists, set marker
                     if(listing.geotag !== 'None')
                     {
-                        // set pos data from geotag
-                        // var listingGeoTag = listing.geotag.replace(/[{()}]/g, '');
-
                         // convert geotag string to marker location array
                         var listingPosData = listing.geotag.replace(/[{()}]/g, '').split(',', 2);
                         var listingPos = {
                             lat: parseFloat(listingPosData[0]),
                             lng: parseFloat(listingPosData[1])
                         };
-                        // console.log(listingPos);
 
                         // create marker
                         DT.setMapMarker(map, listingPos);
