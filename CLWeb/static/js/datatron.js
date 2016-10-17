@@ -56,7 +56,9 @@ DataTron.prototype.setListingsAsMarkers = function(map){
             }
         },
         error: function(){
-            console.log('[ERROR] could not load listing data!');
+            var errorBot = new ErrorBot(2, 'could not load listing data');
+            errorBot.displayError();
+            errorBot.logErrorToConsole();
         }
     });
 };

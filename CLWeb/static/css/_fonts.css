@@ -4,7 +4,4 @@
     Stylesheet where custom fonts are imported for use
 */
 
-@font-face {
-    font-family: 'Maven Pro';
-    src: url('/CLTools/CLWeb/static/media/fonts/maven_pro/MavenPro-Regular.ttf');
-}
+@import url('https://fonts.googleapis.com/css?family=Bungee+Inline|Dosis:700|Maven+Pro:700');

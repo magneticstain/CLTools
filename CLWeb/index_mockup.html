@@ -2,12 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CLWeb :: CLTools :: Home</title>
+
+    <title>CLWeb /:/ CLTools /:/ Home</title>
+
+    <link href="/CLTools/CLWeb/static/media/icons/favicon.ico" rel="icon" type="image/x-icon">
 
     <!-- css -->
     <link href="/CLTools/CLWeb/static/css/main.css" rel="stylesheet" media="all">
 </head>
 <body id="clweb">
+    <div id="errorModal"></div>
     <header>
         <div>
             <img src="/CLTools/CLWeb/static/media/icons/buildings.png" alt="Welcome to CLWeb!">
@@ -18,6 +22,11 @@
         <article>
             <section>
                 <div id="map"></div>
+            </section>
+            <section>
+                <div id="stats">
+
+                </div>
             </section>
         </article>
     </main>
@@ -31,6 +40,7 @@
 
     <!-- js -->
     <script src="/CLTools/CLWeb/static/js/jquery-3.1.1.min.js" rel="script"></script>
+    <script src="/CLTools/CLWeb/static/js/errorbot.js" rel="script"></script>
     <script src="/CLTools/CLWeb/static/js/datatron.js" rel="script"></script>
     <script src="/CLTools/CLWeb/static/js/main.js" rel="script"></script>
 </body>

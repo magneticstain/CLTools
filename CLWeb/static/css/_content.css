@@ -7,13 +7,15 @@
 #map {
     background: #E5E3DF;
     height: 640px;
+    max-height: 960px;
+    min-height: 480px;
     width: 100%;
 }
 
 #map .errorWrapper {
     font: 48px 'Bungee Inline', cursive;
-    margin: 8% auto;
-    /*padding: 25px;*/
+    margin: 0 auto;
+    padding: 8% 0;
     text-align: center;
     width: 64%;
 }
