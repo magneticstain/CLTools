@@ -95,6 +95,8 @@ ErrorBot.prototype.generateGoogleMapsAPIError = function(){
     // generate a Google Maps API error, which requires special-handling
     $('#map').html('' +
         '<div class="errorWrapper">' +
+        '   <p class="error">[ ERROR ]</p>' +
+        '   <br />' +
         '   <p class="error">Could not load Google Maps API</p>' +
         '   <br>' +
         '   <p class="error">(ಥ﹏ಥ)</p>' +

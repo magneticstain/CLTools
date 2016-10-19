@@ -56,7 +56,7 @@ $(document).ready(function(){
 
     // import Google Maps API and generate listing map
     $.ajax({
-        url: 'https://maps.googleapis.com/maps/api/js?key=' + GOOGLE_MAPS_API_KEY + '&callback=generateListingMap',
+        url: 'https://maps.googeapis.com/maps/api/js?key=' + GOOGLE_MAPS_API_KEY + '&callback=generateListingMap',
         // url: 'https://maps.gogleapis.com/maps/api/js?key=' + GOOGLE_MAPS_API_KEY + '&callback=generateListingMap',
         crossdomain: true,
         dataType: 'script',
