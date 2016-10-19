@@ -15,6 +15,7 @@ header div * {
 }
 
 header div h1 {
+    color: #32322C;
     display: inline-block;
     font: 32px 'Maven Pro', sans-serif;
     letter-spacing: 2px;

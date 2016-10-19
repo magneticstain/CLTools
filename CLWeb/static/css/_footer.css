@@ -4,6 +4,10 @@
     Stylesheet including all footer-related styles
 */
 
+footer {
+    clear: both;
+}
+
 footer .sectionWrapper {
     background: #95ADB6;
     border-top: 2px solid #3C92CA;

@@ -4,12 +4,15 @@
     Stylesheet including styles used for all primary content
 */
 
-#map {
+#contentWrapper {
     background: #E5E3DF;
     height: 640px;
     max-height: 960px;
     min-height: 480px;
-    width: 100%;
+}
+
+#contentWrapper #stats,#map {
+    height: 100%;
 }
 
 #map .errorWrapper {
@@ -17,5 +20,51 @@
     margin: 0 auto;
     padding: 8% 0;
     text-align: center;
-    width: 64%;
+}
+
+#stats {
+    float: left;
+    font-family: 'Montserrat', sans-serif;
+    overflow: auto;
+    text-align: center;
+    width: 232px;
+}
+
+#statsTitle {
+    background: #3C92CA;
+    padding: 12px;
+}
+
+#stats img,h2 {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#stats div:first-child img {
+    padding: 12px;
+}
+
+#stats h2 {
+    color: #EFEFEF;
+    font-size: 16px;
+    letter-spacing: 2px;
+}
+
+#stats .statContainer {
+    margin-top: 24px;
+}
+
+#stats .statContainer h3 {
+    border-bottom: 2px dotted #32322C;
+    color: #32322C;
+    font-size: 12px;
+    margin: 16px auto;
+    padding: 8px;
+    width: 65%;
+}
+
+#stats .statContainer p {
+    color: #3C92CA;
+    font-size: 32px;
+    margin: 16px 0;
 }
