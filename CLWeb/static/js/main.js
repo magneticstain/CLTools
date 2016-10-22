@@ -50,6 +50,21 @@ function generateListingMap()
     }
 }
 
+function loadStats()
+{
+    /*
+        Load CLWeb statistics from CLWeb Metrics API
+     */
+
+    var apiBaseUrl = '/CLTools/CLData/api/v1/metrics/';
+
+    // calculate: avg rent, avg sq ft, num w/ amenities, and most popular location
+    // avg rent
+    DataTron.getListingStat($('.rent'), apiBaseUrl + '?m=avg&f=price&o=desc', 'currency');
+    // most popular loc
+    DataTron.getListingStat($('.popLocation'), apiBaseUrl + '?m=count&f=location&o=desc&l=1', 'text');
+}
+
 $(document).ready(function(){
     // generate ErrorBot()
     var errorBot = new ErrorBot();
@@ -68,5 +83,5 @@ $(document).ready(function(){
     });
 
     // load stats
-    
+    loadStats();
 });

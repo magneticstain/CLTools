@@ -174,7 +174,7 @@ namespace CLTools\CLData;
 			$stmt->execute($sqlParams);
 			
 			// fetch result
-			if(!$result = $stmt->fetchAll(\PDO::FETCH_ASSOC))
+			if(!$result = $stmt->fetchAll(\PDO::FETCH_NUM))
 			{
 				// request is bad
 				$pdoError = $stmt->errorInfo();
