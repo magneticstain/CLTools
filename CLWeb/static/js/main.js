@@ -66,4 +66,7 @@ $(document).ready(function(){
             errorBot.generateGoogleMapsAPIError();
         }
     });
+
+    // load stats
+    
 });

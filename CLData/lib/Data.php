@@ -14,10 +14,10 @@ namespace CLTools\CLData;
 	class Data
 	{
 		public $dbConn = '';
-		private $dbConnConfig = array();
+		protected $dbConnConfig = array();
 		public $listingID = 0;
-		public $dataField = '';
-		private $data = array();
+		protected $dataField = '';
+		protected $data = array();
 
 		public function __construct($dbConnConfig, $listingID = 0, $dataField = '*')
 		{
@@ -33,19 +33,55 @@ namespace CLTools\CLData;
 
 //			throw new \Exception('testing');
 		}
+		
+		// SETTERS
+		
+		public function setData($data)
+		{
+			/*
+			 *  Purpose: set private data var
+			 *
+			 *  Params: NONE
+			 *
+			 *  Returns: bool
+			 */
+			
+			$this->data = $data;
+		}
 
 		# GETTERS
-		public function getData()
+		public function getData($rawData = false, $key = 0)
 		{
 			/*
 			 *  Purpose: getter for private data variable
 			 *
-			 *  Params: NONE
+			 *  Params:
+			 * 		$rawData :: bool :: return raw data or processed data
+			 * 		$key :: string :: index key of data to return if data is array
 			 *
-			 *  Returns: private obj var
+			 *  Returns: various data types
 			 */
+			
+			// check if raw data should be returned and stop there if so
+			if($rawData)
+			{
+				return $this->data;
+			}
 
 			$dataSet = $this->data;
+			
+			// check if key is specified; if so, return data indexed at that key in $data
+			if(!empty($key))
+			{
+				if(isset($this->data[$key]))
+				{
+					return $this->data[$key];
+				}
+				else
+				{
+					return [];
+				}
+			}
 
 			// strip primary key (id) from dataset (it's preferred not to leak this information from a security standpoint)
 			if(isset($dataSet['id']))

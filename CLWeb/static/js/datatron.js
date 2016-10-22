@@ -58,3 +58,49 @@ DataTron.prototype.setListingsAsMarkers = function(map){
         }
     });
 };
+
+// STATS
+DataTron.prototype.getAvgRent = function(){
+
+};
+
+DataTron.prototype.loadStats = function(){
+    /*
+        Load CLWeb statistics from CLWeb Metrics API
+     */
+
+    var apiUrl = '/CLTools/CLData/api/v1/metrics/';
+
+    // calculate: avg rent, avg sq ft, num w/ amenities, and most popular location
+
+
+    $.ajax({
+        url: apiUrl,
+        dataType: 'json',
+        success: function(listingData){
+            if(listingData.success)
+            {
+                $.each(listingData.data, function(i, listing){
+                    // if geotag exists, set marker
+                    if(listing.geotag !== 'None')
+                    {
+                        // convert geotag string to marker location array
+                        var listingPosData = listing.geotag.replace(/[{()}]/g, '').split(',', 2);
+                        var listingPos = {
+                            lat: parseFloat(listingPosData[0]),
+                            lng: parseFloat(listingPosData[1])
+                        };
+
+                        // create marker
+                        DT.setMapMarker(map, listingPos);
+                    }
+                });
+            }
+        },
+        error: function(){
+            var errorBot = new ErrorBot(2, 'could not load listing data');
+            errorBot.displayError();
+            errorBot.logErrorToConsole();
+        }
+    });
+};
