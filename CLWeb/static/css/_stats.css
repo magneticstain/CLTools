@@ -19,7 +19,7 @@
     padding: 12px;
 }
 
-#stats img,h2 {
+#stats img,h2,#advancedStats {
     display: inline-block;
     vertical-align: middle;
 }
@@ -51,4 +51,12 @@
     color: #3C92CA;
     font-size: 32px;
     margin: 16px 0;
+}
+
+#advancedStats {
+    background: #3C92CA;
+    color: #EFEFEF;
+    font-size: 12px;
+    margin: 16px 0;
+    padding: 4px;
 }

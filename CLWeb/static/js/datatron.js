@@ -4,18 +4,46 @@
  *  A JS library for interfacing with data models (e.g. listings) and APIs
  */
 
-var DataTron = function(){};
+var DataTron = function(){
+    this.infoWindows = [];
+};
 
-DataTron.prototype.setMapMarker = function(map, pos){
+DataTron.closeAllInfoWindows = function(infoWindowGrp){
+    /*
+        Close all infoWindow's in this.infoWindows group
+     */
+
+    for(var i = 0; i < infoWindowGrp.length;i++)
+    {
+        infoWindowGrp[i].close();
+    }
+};
+
+DataTron.prototype.setMapMarker = function(map, pos, infoWindow){
     /*
         Add marker to given Map() obj
      */
+
+    var infoWindowGrp = this.infoWindows;
 
     // create marker
     var marker = new google.maps.Marker({
         position: pos,
         map: map
     });
+
+    // add info window if requested
+    if(typeof infoWindow !== 'undefined')
+    {
+        // add infoWindow to group
+        this.infoWindows.push(infoWindow);
+
+        // add event listener
+        marker.addListener('click', function(){
+            DataTron.closeAllInfoWindows(infoWindowGrp);
+            infoWindow.open(map, marker);
+        });
+    }
 };
 
 DataTron.prototype.setListingsAsMarkers = function(map){
@@ -24,6 +52,7 @@ DataTron.prototype.setListingsAsMarkers = function(map){
      */
 
     var DT = this;
+    var IW = null;
 
     // Query CLData for listing data with given parameters
     var apiUrl = '/CLTools/CLData/api/v1/data/all/';
@@ -45,8 +74,13 @@ DataTron.prototype.setListingsAsMarkers = function(map){
                             lng: parseFloat(listingPosData[1])
                         };
 
+                        // create InfoWindow instance
+                        IW = new google.maps.InfoWindow({
+                            content: '<a target="_blank" rel="noopener noreferrer" href="' + listing.url + '">' + listing.name + '</a>'
+                        });
+
                         // create marker
-                        DT.setMapMarker(map, listingPos);
+                        DT.setMapMarker(map, listingPos, IW);
                     }
                 });
             }
