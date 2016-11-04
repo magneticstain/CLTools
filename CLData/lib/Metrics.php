@@ -322,18 +322,7 @@ namespace CLTools\CLData;
 			}
 			
 			// set result array as data
-			if($wrapResults)
-			{
-				// set results in a wrapping array
-				parent::setData([
-					$result
-				]);
-			}
-			else
-			{
-				// set results in raw form
-				parent::setData($result);
-			}
+			parent::setData($result);
 		}
 	}
 
