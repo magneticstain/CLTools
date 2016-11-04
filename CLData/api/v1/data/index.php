@@ -89,7 +89,7 @@ namespace CLTools\CLData;
 			exit();
 		}
 	} catch(\Exception $e) {
-		error_log('CLTools :: CLData :: [ SEV: ERROR ] :: [ LID: '.$listingID.' ] :: could not query database for listing :: [ FIELD: '.$field.' ] :: [ MSG: '.$e->getMessage().' ]');
+		error_log('CLTools :: CLData :: [ SEV: CRIT ] :: [ LID: '.$listingID.' ] :: could not query database for listing :: [ FIELD: '.$field.' ] :: [ MSG: '.$e->getMessage().' ]');
 
 		echo json_encode([
 			'success'	=>	false,

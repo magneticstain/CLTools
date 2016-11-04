@@ -50,38 +50,35 @@ function generateListingMap()
     }
 }
 
-function loadStats()
-{
-    /*
-        Load CLWeb statistics from CLWeb Metrics API
-     */
-
-    var apiBaseUrl = '/CLTools/CLData/api/v1/metrics/';
-
-    // calculate: avg rent, avg sq ft, num w/ amenities, and most popular location
-    // avg rent
-    DataTron.getListingStat($('.rent'), apiBaseUrl + '?m=avg&f=price&o=desc', 'currency');
-    // most popular loc
-    DataTron.getListingStat($('.popLocation'), apiBaseUrl + '?m=count&f=location&o=desc&l=1', 'text');
-}
-
 $(document).ready(function(){
-    // generate ErrorBot()
+    // initialize ErrorBot()
     var errorBot = new ErrorBot();
 
-    // import Google Maps API and generate listing map
-    $.ajax({
-        url: 'https://maps.googleapis.com/maps/api/js?key=' + GOOGLE_MAPS_API_KEY + '&callback=generateListingMap',
-        // url: 'https://maps.gogleapis.com/maps/api/js?key=' + GOOGLE_MAPS_API_KEY + '&callback=generateListingMap',
-        crossdomain: true,
-        dataType: 'script',
-        timeout: 8000,
-        error: function(){
-            // couldn't load Google Maps JS API
-            errorBot.generateGoogleMapsAPIError();
-        }
-    });
+    // check if advanced stats should be started automatically
+    if(window.location.hash === '#advanced')
+    {
+        Statscream.startAdvancedStats($('#contentWrapper'));
+    }
+    else
+    {
+        // import Google Maps API and generate listing map
+        $.ajax({
+            url: 'https://maps.googleapis.com/maps/api/js?key=' + GOOGLE_MAPS_API_KEY + '&callback=generateListingMap',
+            crossdomain: true,
+            dataType: 'script',
+            timeout: 8000,
+            error: function(){
+                // couldn't load Google Maps JS API
+                errorBot.generateGoogleMapsAPIError();
+            }
+        });
 
-    // load stats
-    loadStats();
+        // load basic stats
+        Statscream.loadStats();
+
+        // create event listener for advanced stats
+        $('#advancedStats').click(function(){
+            Statscream.startAdvancedStats($('#contentWrapper'));
+        });
+    }
 });

@@ -21,3 +21,11 @@
     padding: 8% 0;
     text-align: center;
 }
+
+#map .listingLocation {
+    font-weight: bold;
+}
+
+#map .listingPrice {
+    font-style: italic;
+}

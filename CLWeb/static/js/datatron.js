@@ -8,6 +8,7 @@ var DataTron = function(){
     this.infoWindows = [];
 };
 
+// MAPS
 DataTron.closeAllInfoWindows = function(infoWindowGrp){
     /*
         Close all infoWindow's in this.infoWindows group
@@ -76,7 +77,8 @@ DataTron.prototype.setListingsAsMarkers = function(map){
 
                         // create InfoWindow instance
                         IW = new google.maps.InfoWindow({
-                            content: '<a target="_blank" rel="noopener noreferrer" href="' + listing.url + '">' + listing.name + '</a>'
+                            content: '<a target="_blank" rel="noopener noreferrer" href="' + listing.url + '">' + listing.name + '</a>' +
+                            '<p><strong class="listingLocation">' + listing.location + '</strong>, <i class="listingPrice">$' + listing.price + '</i></p>'
                         });
 
                         // create marker
@@ -117,41 +119,9 @@ DataTron.formatReturnData = function(dataType, data){
 
             break;
         default:
+            // keep input data unmodified
             formattedData = data;
     }
 
     return formattedData;
-};
-
-DataTron.getListingStat = function(selector, apiUrl, returnDataType, returnFieldNum){
-    /*
-        Query Metrics API for requested stat and update the dataSink with the results
-     */
-
-    var stat = '---';
-    var statWrapper = selector;
-
-    if(typeof returnFieldNum === 'undefined')
-    {
-        returnFieldNum = 0;
-    }
-
-    $.ajax({
-        url: apiUrl,
-        dataType: 'json',
-        success: function(metricsData){
-            if(metricsData.success)
-            {
-                // parse stat
-                stat = DataTron.formatReturnData(returnDataType, metricsData.metrics[0][returnFieldNum]);
-            }
-
-            statWrapper.children('p').text(stat);
-        },
-        error: function(){
-            var errorBot = new ErrorBot(2, 'could not access Metrics API');
-            errorBot.displayError();
-            errorBot.logErrorToConsole();
-        }
-    });
 };

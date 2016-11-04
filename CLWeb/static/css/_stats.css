@@ -56,7 +56,13 @@
 #advancedStats {
     background: #3C92CA;
     color: #EFEFEF;
+    cursor: pointer;
     font-size: 12px;
     margin: 16px 0;
     padding: 4px;
+}
+
+#statsWrapper .advStatsChartWrapper {
+    margin: 16px auto;
+    width: 84%;
 }
