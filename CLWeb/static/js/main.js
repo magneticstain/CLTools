@@ -9,10 +9,10 @@ $(document).ready(function(){
     // check if advanced stats should be started automatically
     if(window.location.hash === '#advanced')
     {
-        Statscream.startAdvancedStats($('#contentWrapper'));
+        Statscream.startAdvancedStats();
     }
     else
     {
-        Statscream.startBasicStats($('#contentWrapper'))
+        Statscream.startBasicStats()
     }
 });

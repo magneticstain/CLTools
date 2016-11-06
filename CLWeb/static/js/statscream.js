@@ -56,18 +56,20 @@ Statscream.loadStats = function(){
 	Statscream.updateListingStat($('.popLocation'), apiBaseUrl + '?m=count&f=location&o=desc&l=1', 'text');
 };
 
-Statscream.startBasicStats = function(contentSelector){
+Statscream.startBasicStats = function(){
 	/*
-	 Update view to provide user with basic listing statistics
+	    Update view to provide user with basic listing statistics
 	 */
 
 	// set selector for content wrapper
-	// contentSelector = $('#contentWrapper');
+	var contentSelector = $('#contentWrapper');
+	var statsWrapper = $('#stats');
 
-	// fade out current content and replace w/ basic stats html
-	contentSelector.children().fadeOut(function(){
+	// fade out current stats
+	contentSelector.fadeOut(500, function(){
+		// update content html
 		contentSelector.html('' +
-			'<div id="stats"> ' +
+			'<div id="stats">' +
 			'   <div id="statsTitle"> ' +
 			'       <img src="/CLTools/CLWeb/static/media/icons/stats.png" title="Detailed Listing Statistics" alt="Listing stats icon"> ' +
 			'       <h2>CLWeb Stats</h2> ' +
@@ -84,21 +86,24 @@ Statscream.startBasicStats = function(contentSelector){
 			'       <div class="statsButton advanced"> ' +
 			'           <p>Advanced Stats</p> ' +
 			'       </div> ' +
-			'   </div> ' +
-			'</div> ' +
+			'   </div>' +
+			'</div>' +
 			'<div title="Listings Map - view all collected listings!" id="map"></div>');
-
-		// generate map
-		DataTron.generateListingMap();
-
+	}).fadeIn(500, function(){
 		// load basic stats
 		Statscream.loadStats();
 
 		// add handler for adv stats button
 		$('.advanced').click(function(){
-			Statscream.startAdvancedStats($('#contentWrapper'));
+			Statscream.startAdvancedStats();
 		});
-	}).fadeIn(500);
+
+		// generate map
+		DataTron.generateListingMap();
+
+		// set URL hash value
+		window.location.hash = 'basic';
+	});
 };
 
 // ADVANCED STATS
@@ -248,13 +253,13 @@ Statscream.loadGraphs = function(){
 	Statscream.fetchChartData(apiBaseUrl + 'metrics/?f=price&t=daily&o=avg', 'Rent Price', $('#rentOverTimeChart'), 'line');
 };
 
-Statscream.startAdvancedStats = function(contentSelector){
+Statscream.startAdvancedStats = function(){
 	/*
 		Update view to provide user with advanced listing statistics
 	 */
 
 	// fade out all content within selector
-	contentSelector.children(':not(#stats)').fadeOut();
+	$('#contentWrapper').children(':not(#stats)').fadeOut();
 
 	// expand stats section
 	statsSection = $('#stats');
@@ -274,7 +279,7 @@ Statscream.startAdvancedStats = function(contentSelector){
 
 			// add handler for basic stats button
 			$('.basic').click(function(){
-				Statscream.startBasicStats(contentSelector);
+				Statscream.startBasicStats();
 			});
 		});
 	});
