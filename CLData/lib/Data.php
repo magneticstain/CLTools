@@ -8,7 +8,7 @@ namespace CLTools\CLData;
 	 */
 
 	/*
-	 *  Data.php - class used for easily retriving and providing various data and its characteristics
+	 *  Data.php - class used for easily retrieving and providing various data and its characteristics
 	 */
 
 	class Data
