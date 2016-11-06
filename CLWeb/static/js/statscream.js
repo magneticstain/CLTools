@@ -65,8 +65,6 @@ Statscream.startBasicStats = function(){
 	var contentWrapper = $('#contentWrapper');
 	var statsWrapper = $('#stats');
 
-	console.log('here');
-
 	statsWrapper.animate({
 		width: '232px'
 	}, 500, function(){
