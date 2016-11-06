@@ -61,15 +61,17 @@ Statscream.startBasicStats = function(){
 	    Update view to provide user with basic listing statistics
 	 */
 
-	// set selector for content wrapper
-	var contentSelector = $('#contentWrapper');
+	// set selector for content and stats wrappers
+	var contentWrapper = $('#contentWrapper');
 	var statsWrapper = $('#stats');
 
-	// fade out current stats
-	contentSelector.fadeOut(500, function(){
-		// update content html
-		contentSelector.html('' +
-			'<div id="stats">' +
+	console.log('here');
+
+	statsWrapper.animate({
+		width: '232px'
+	}, 500, function(){
+		// update stats html
+		statsWrapper.html('' +
 			'   <div id="statsTitle"> ' +
 			'       <img src="/CLTools/CLWeb/static/media/icons/stats.png" title="Detailed Listing Statistics" alt="Listing stats icon"> ' +
 			'       <h2>CLWeb Stats</h2> ' +
@@ -86,20 +88,24 @@ Statscream.startBasicStats = function(){
 			'       <div class="statsButton advanced"> ' +
 			'           <p>Advanced Stats</p> ' +
 			'       </div> ' +
-			'   </div>' +
-			'</div>' +
-			'<div title="Listings Map - view all collected listings!" id="map"></div>');
-	}).fadeIn(500, function(){
+			'   </div>');
+
+		// remove any previously-loaded maps
+		$('#map').remove();
+
+		// append map div after stats
+		contentWrapper.append('<div title="Listings Map - view all collected listings!" id="map"></div>');
+
 		// load basic stats
 		Statscream.loadStats();
+
+		// generate map
+		DataTron.generateListingMap();
 
 		// add handler for adv stats button
 		$('.advanced').click(function(){
 			Statscream.startAdvancedStats();
 		});
-
-		// generate map
-		DataTron.generateListingMap();
 
 		// set URL hash value
 		window.location.hash = 'basic';
