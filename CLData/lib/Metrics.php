@@ -220,6 +220,46 @@ namespace CLTools\CLData;
 			}
 		}
 		
+		private function generateMetricsSQL()
+		{
+			/*
+			 * 	Purpose: generate specific SQL query for metrics based on incoming data
+			 *
+			 * 	Params: NONE
+			 *
+			 * 	Returns: string
+			 */
+			
+			// check what kind of operator we have so we can generate correct select and order by SQL clauses, and
+			// determine whether to unwrap the sql results (usually done with single-record results in order to remove unnecessary arrays)
+			if($this->operator === 'AVG')
+			{
+				$sqlSelectClause = $this->operator.'('.$this->field.')';
+				
+				$sqlOptions = '
+						ORDER BY 1';
+			}
+			else
+			{
+				$sqlSelectClause  = $this->field.',
+							'.$this->operator.'(*) as value';
+				
+				$sqlOptions = '
+						GROUP BY 1
+						ORDER BY 2 DESC';
+			}
+			
+			// concatonate full sql query
+			return '
+						SELECT
+							'.$sqlSelectClause.'
+						FROM
+							listings
+						WHERE
+							post_date LIKE ?
+						'.$sqlOptions;
+		}
+		
 		public function generateMetrics()
 		{
 			/*
@@ -240,36 +280,8 @@ namespace CLTools\CLData;
 			if(!empty($this->field))
 			{
 				// in this case, we will need to cycle through each timespan and get the count by field for each one
-				// check what kind of operator we have so we can generate correct select and order by SQL clauses, and
-				// determine whether to unwrap the sql results (usually done with single-record results in order to remove unnecessary arrays)
-				if($this->operator === 'AVG')
-				{
-					$sqlSelectClause = $this->operator.'('.$this->field.')';
-					
-					$sqlOptions = '
-						ORDER BY 1';
-					
-					$unwrapResults = true;
-				}
-				else
-				{
-					$sqlSelectClause  = $this->field.',
-							'.$this->operator.'(*) as value';
-					
-					$sqlOptions = '
-						GROUP BY 1
-						ORDER BY 2 DESC';
-				}
-				
-				// concatonate full sql query
-				$sql  = '
-						SELECT
-							'.$sqlSelectClause.'
-						FROM
-							listings
-						WHERE
-							post_date LIKE ?
-						'.$sqlOptions;
+				// generate sql query
+				$sql = $this->generateMetricsSQL();
 				
 				// init stmt
 				$stmt = $this->dbConn->prepare($sql);
@@ -298,14 +310,15 @@ namespace CLTools\CLData;
 					else
 					{
 						// add sql results to our current results array
-						if($unwrapResults)
+						// check if single-record result was returned
+						if(count($sqlResults[0]) === 1)
 						{
-							// add results of first sql record only
+							// single-record result, add as raw value
 							array_push($currentResults, $sqlResults[0][0]);
 						}
 						else
 						{
-							// add all sql results
+							// multiple records, add all sql results
 							array_push($currentResults, $sqlResults);
 						}
 						

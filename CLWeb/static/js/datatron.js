@@ -4,19 +4,19 @@
  *  A JS library for interfacing with data models (e.g. listings) and APIs
  */
 
-var DataTron = function(){
-    this.infoWindows = [];
-};
+var DataTron = function(){};
+
+DataTron.infoWindows = [];
 
 // MAPS
-DataTron.closeAllInfoWindows = function(infoWindowGrp){
+DataTron.closeAllInfoWindows = function(){
     /*
         Close all infoWindow's in this.infoWindows group
      */
 
-    for(var i = 0; i < infoWindowGrp.length;i++)
+    for(var i = 0; i < DataTron.infoWindows.length;i++)
     {
-        infoWindowGrp[i].close();
+        DataTron.infoWindows[i].close();
     }
 };
 
@@ -24,8 +24,6 @@ DataTron.prototype.setMapMarker = function(map, pos, infoWindow){
     /*
         Add marker to given Map() obj
      */
-
-    var infoWindowGrp = this.infoWindows;
 
     // create marker
     var marker = new google.maps.Marker({
@@ -37,22 +35,21 @@ DataTron.prototype.setMapMarker = function(map, pos, infoWindow){
     if(typeof infoWindow !== 'undefined')
     {
         // add infoWindow to group
-        this.infoWindows.push(infoWindow);
+        DataTron.infoWindows.push(infoWindow);
 
         // add event listener
         marker.addListener('click', function(){
-            DataTron.closeAllInfoWindows(infoWindowGrp);
+            DataTron.closeAllInfoWindows();
             infoWindow.open(map, marker);
         });
     }
 };
 
-DataTron.prototype.setListingsAsMarkers = function(map){
+DataTron.setListingsAsMarkers = function(map){
     /*
         Retrieve listing data and set as markers to given map
      */
 
-    var DT = this;
     var IW = null;
 
     // Query CLData for listing data with given parameters
@@ -82,7 +79,7 @@ DataTron.prototype.setListingsAsMarkers = function(map){
                         });
 
                         // create marker
-                        DT.setMapMarker(map, listingPos, IW);
+                        DataTron.prototype.setMapMarker(map, listingPos, IW);
                     }
                 });
             }
@@ -93,6 +90,48 @@ DataTron.prototype.setListingsAsMarkers = function(map){
             errorBot.logErrorToConsole();
         }
     });
+};
+
+DataTron.generateListingMap = function(){
+    /*
+        Generates a map using the Google Maps JS API and data from the CLData API
+     */
+
+    // generate Map()
+    var map = new google.maps.Map(
+        document.getElementById('map'), {
+            center: {
+                lat: 0,
+                lng: 0
+            },
+            zoom: 9
+        }
+    );
+
+    // add listings as markers
+    DataTron.setListingsAsMarkers(map);
+
+    // get current location (via HTML5 ^_^)
+    var pos = {
+        lat: 0,
+        lng: 0
+    };
+    if(navigator.geolocation)
+    {
+        navigator.geolocation.getCurrentPosition(function(currPos){
+            // set position as current location
+            pos.lat = currPos.coords.latitude;
+            pos.lng = currPos.coords.longitude;
+
+            // set center of map to current location
+            map.setCenter(pos);
+        });
+    }
+    else
+    {
+        // center on default position
+        map.setCenter(pos);
+    }
 };
 
 // STATS

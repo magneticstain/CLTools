@@ -153,7 +153,6 @@ def startQueryFetcher(dbConn, CLH, CLL, searchSort, searchResultCnt, searchSleep
 			# scrape listing
 			# log start message
 			CLL.logMsg('Fetching listings...', 'INFO')
-			# print "%s" % runningConfig.config.get('search', 'search_result_count')
 			CL_results = CLH.get_results(sort_by=searchSort, limit=searchResultCnt, geotagged=True)
 
 			# log status message
@@ -240,13 +239,18 @@ def main():
 			'max_price': listingMaxPrice
 		}
 	)
+
+	# Logging
 	CLL = CLLogging()
 	CLL.initializeLogger(logFile)
+
+	# DB
 	dbConn = CLL.initializeDbConnection(dbHost, dbUser, dbPass, dbName, dbPort)
 
+	# start fetching listings
 	startQueryFetcher(dbConn, CLH, CLL, searchSort, searchResultCnt, searchSleepTime)
 
-	# close db connection
+	# close db connection before ending program
 	dbConn.close()
 
 if __name__ == '__main__':

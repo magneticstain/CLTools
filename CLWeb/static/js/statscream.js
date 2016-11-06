@@ -42,8 +42,7 @@ Statscream.updateListingStat = function(selector, apiUrl, returnDataType, return
 	});
 };
 
-Statscream.loadStats = function()
-{
+Statscream.loadStats = function(){
 	/*
 	    Load CLWeb statistics from CLWeb Calc API
 	 */
@@ -57,6 +56,51 @@ Statscream.loadStats = function()
 	Statscream.updateListingStat($('.popLocation'), apiBaseUrl + '?m=count&f=location&o=desc&l=1', 'text');
 };
 
+Statscream.startBasicStats = function(contentSelector){
+	/*
+	 Update view to provide user with basic listing statistics
+	 */
+
+	// set selector for content wrapper
+	// contentSelector = $('#contentWrapper');
+
+	// fade out current content and replace w/ basic stats html
+	contentSelector.children().fadeOut(function(){
+		contentSelector.html('' +
+			'<div id="stats"> ' +
+			'   <div id="statsTitle"> ' +
+			'       <img src="/CLTools/CLWeb/static/media/icons/stats.png" title="Detailed Listing Statistics" alt="Listing stats icon"> ' +
+			'       <h2>CLWeb Stats</h2> ' +
+			'   </div> ' +
+			'   <div id="statsWrapper"> ' +
+			'       <div class="statContainer rent"> ' +
+			'           <h3>Avg. Rent</h3> ' +
+			'           <p>---</p> ' +
+			'       </div> ' +
+			'       <div class="statContainer popLocation"> ' +
+			'           <h3>Most Popular Location</h3> ' +
+			'           <p>---</p> ' +
+			'       </div> ' +
+			'       <div class="statsButton advanced"> ' +
+			'           <p>Advanced Stats</p> ' +
+			'       </div> ' +
+			'   </div> ' +
+			'</div> ' +
+			'<div title="Listings Map - view all collected listings!" id="map"></div>');
+
+		// generate map
+		DataTron.generateListingMap();
+
+		// load basic stats
+		Statscream.loadStats();
+
+		// add handler for adv stats button
+		$('.advanced').click(function(){
+			Statscream.startAdvancedStats($('#contentWrapper'));
+		});
+	}).fadeIn(500);
+};
+
 // ADVANCED STATS
 Statscream.initializeAdvancedStatsInView = function(statsContainer){
 	/*
@@ -66,6 +110,12 @@ Statscream.initializeAdvancedStatsInView = function(statsContainer){
 	// the new stats will be appended to the html currently within the container
 	var html = '';
 	var canvasHeight = 128;
+
+	// add basic stats button for user to return
+	html += '' +
+		'<div class="statsButton basic">' +
+		'   <p>Basic Stats</p>' +
+		'</div>';
 
 	// location count
 	html += '' +
@@ -221,6 +271,11 @@ Statscream.startAdvancedStats = function(contentSelector){
 
 			// update URL
 			window.location.hash = 'advanced';
+
+			// add handler for basic stats button
+			$('.basic').click(function(){
+				Statscream.startBasicStats(contentSelector);
+			});
 		});
 	});
 };
