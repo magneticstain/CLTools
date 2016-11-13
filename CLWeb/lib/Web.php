@@ -24,6 +24,32 @@ namespace CLTools\CLWeb;
 		}
 		
 		// OTHER FUNCTIONS
+		public static function setHTTPHeaders()
+		{
+			/*
+			 *  Purpose: set necessary HTTP headers; usually includes security and cache headers
+			 *
+			 *  Params: NONE
+			 *
+			 *  Returns: NONE
+			 *
+			 * 	Addl. Info:
+			 * 		* https://www.owasp.org/index.php/OWASP_Secure_Headers_Project#tab=Headers
+			 */
+			
+			// HSTS
+			header('strict-transport-security: max-age=86400');
+			
+			// X-Frame-Options
+			header('X-Frame-Options: sameorigin');
+			
+			// Browser XSS Protection
+			header('X-XSS-Protection: 1');
+			
+			// Disable Content Sniffing (why IE...)
+			header('X-Content-Type-Options: nosniff');
+		}
+		
 		public function generateHTML()
 		{
 			/*
@@ -51,8 +77,10 @@ namespace CLTools\CLWeb;
 					<div id="errorModal"></div>
 					<header>
 						<div>
-							<img src="/CLTools/CLWeb/static/media/icons/buildings.png" title="Welcome to CLWeb!" alt="Logo for CLWeb">
-							<h1>CLTools <span class="accent">::</span> CLWeb</h1>
+							<a href="/CLTools/CLWeb/" title="CLWeb Home">
+								<img src="/CLTools/CLWeb/static/media/icons/buildings.png" title="Welcome to CLWeb!" alt="Logo for CLWeb">
+								<h1>CLTools <span class="accent">::</span> CLWeb</h1>
+							</a>
 						</div>
 					</header>
 					<main>
@@ -90,7 +118,7 @@ namespace CLTools\CLWeb;
 		
 		public function __toString()
 		{
-			// Overload of toString function in order to generate HTML on echo
+			// Overload of toString function in order to generate HTML when treated as a string
 			
 			return $this->generateHTML();
 		}

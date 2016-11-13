@@ -42,7 +42,6 @@ class CLListing:
 		self.CLH = CLH
 
 	# DATABASE
-	# initialize db connection
 	def initializeDbConnection(self, dbHost, dbUser, dbPass, dbName, dbPort=3306):
 		"""
 		Purpose: Create a new db connection to be used by the application
@@ -113,8 +112,8 @@ class CLListing:
 			sql = """INSERT INTO
 						listings(listing_id, post_date, url, location, price, name, geotag)
 					VALUES('%d', '%s', '%s', '%s', '%d', '%s', '%s')""" \
-				  % (int(CLResult['id']), CLResult['datetime'], CLResult['url'], CLResult['where'],
-					 int(CLResult['price'].replace('$', '')), CLResult['name'], CLResult['geotag'])
+				% (int(CLResult['id']), CLResult['datetime'], CLResult['url'], CLResult['where'],
+					int(CLResult['price'].replace('$', '')), CLResult['name'], CLResult['geotag'])
 
 			try:
 				# create db cursor
@@ -170,8 +169,6 @@ class CLListing:
 				resultCount = 0
 				for result in CL_results:
 
-					# print 'RESULT: %s' % result
-
 					resultCount += 1
 
 					# log result
@@ -194,12 +191,12 @@ class CLListing:
 				self.CLL.logMsg('Sleeping for [ %ds ]...' % searchSleepTime, 'INFO')
 
 				sleep(searchSleepTime)
-		# except KeyboardInterrupt:
-		# 	# close db connection
-		# 	self.dbConn.close()
-		#
-		# 	# quit
-		# 	sys.exit()
+		except KeyboardInterrupt:
+			# close db connection
+			self.dbConn.close()
+
+			# quit
+			sys.exit()
 		except Exception as e:
 			print '[LISTING ERROR] :: could not retrieve CraigsList listings :: [ %s ]' % e.message
 

@@ -6,8 +6,7 @@
 
 #contentWrapper {
     background: #E5E3DF;
-    height: 640px;
-    max-height: 960px;
+    height: 960px;
     min-height: 480px;
 }
 

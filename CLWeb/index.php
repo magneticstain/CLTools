@@ -15,7 +15,10 @@ namespace CLTools\CLWeb;
 	$BASE_URL = $_SERVER['DOCUMENT_ROOT'].'/'.str_replace('\\', '/', __NAMESPACE__);
 	require $BASE_URL.'/lib/Autoloader.php';
 
-	// try to generate html
+	// set http headers
+	Web::setHTTPHeaders();
+
+	// set content template (data is loaded on-demand using CLData APIs
 	$contentHTML = '
 									<div id="stats">
 										<div id="statsTitle">
@@ -39,6 +42,7 @@ namespace CLTools\CLWeb;
 									<div title="Listings Map - view all collected listings!" id="map"></div>
 	';
 
+	// try to generate html
 	try {
 		$web = new Web(
 			$contentHTML
