@@ -48,6 +48,12 @@ namespace CLTools\CLWeb;
 			
 			// Disable Content Sniffing (why IE...)
 			header('X-Content-Type-Options: nosniff');
+			
+			// CSP
+			header('Content-Security-Policy: default-src https:; script-src https: \'unsafe-inline\' \'self\' https://maps.googleapis.com https://fonts.googleapis.com https://*.gstatic.com; style-src https: \'unsafe-inline\'');
+			
+			// Cross-Domain Policies
+			header('X-Permitted-Cross-Domain-Policies: none');
 		}
 		
 		public function generateHTML()
