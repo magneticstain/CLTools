@@ -1,5 +1,5 @@
 <?php
-namespace CLTools\CLData;
+namespace CLTools;
 
 	/*
 	 *  CLTools
@@ -12,12 +12,13 @@ namespace CLTools\CLData;
 	 */
 
 	// import config(s) and libraries
-	$BASE_URL = $_SERVER['DOCUMENT_ROOT'].'/'.str_replace('\\', '/', __NAMESPACE__);
-	require $BASE_URL.'/lib/Autoloader.php';
-	require $BASE_URL.'/conf/db.php';
+	$BASE_URL = $_SERVER['DOCUMENT_ROOT'];
+	require $BASE_URL.'/CLTools/lib/Autoloader.php';
+	require $BASE_URL.'/CLTools/CLData/conf/db.php';
 
-	// set content-type
-	header('Content-Type: application/json');
+	// set http headers
+	// cache time is currently set to 120 seconds in order to balance caching w/ listing freshness
+	CLWeb\Web::setHTTPHeaders(120, 'Content-Type: application/json');
 
 	function generateOptions()
 	{
@@ -75,7 +76,7 @@ namespace CLTools\CLData;
 		// generate options
 		$options = generateOptions();
 		
-		$calc = new Calc(
+		$calc = new CLData\Calc(
 			$DB_CONFIG_OPTIONS,
 			$options['measurement'],
 			$options['field'],

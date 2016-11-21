@@ -1,5 +1,5 @@
 <?php
-namespace CLTools\CLData;
+namespace CLTools;
 
 	/*
 	 *  CLTools
@@ -17,12 +17,13 @@ namespace CLTools\CLData;
 	 */
 
 	// import config(s) and libraries
-	$BASE_URL = $_SERVER['DOCUMENT_ROOT'].'/'.str_replace('\\', '/', __NAMESPACE__);
-	require $BASE_URL.'/lib/Autoloader.php';
-	require $BASE_URL.'/conf/db.php';
+	$BASE_URL = $_SERVER['DOCUMENT_ROOT'];
+	require $BASE_URL.'/CLTools/lib/Autoloader.php';
+	require $BASE_URL.'/CLTools/CLData/conf/db.php';
 
-	// set content-type
-	header('Content-Type: application/json');
+	// set http headers
+	// cache time is currently set to 120 seconds in order to balance caching w/ listing freshness
+	CLWeb\Web::setHTTPHeaders(120, 'Content-Type: application/json');
 
 	// gather identifiers, fields, and options
 	// listing ID
@@ -66,7 +67,7 @@ namespace CLTools\CLData;
 
 	// start data engine
 	try {
-		$data = new Data($DB_CONFIG_OPTIONS, $listingID, $field);
+		$data = new CLData\Data($DB_CONFIG_OPTIONS, $listingID, $field);
 	} catch(\Exception $e) {
 		error_log('CLTools :: CLData :: [ SEV: FATAL ] :: [ LID: '.$listingID.' ] :: could not start data engine :: [ FIELD: '.$field.' ] :: [ MSG: '.$e->getMessage().' ]');
 

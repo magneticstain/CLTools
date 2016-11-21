@@ -12,11 +12,12 @@ namespace CLTools\CLWeb;
 	 */
 
 	// import config(s) and libraries
-	$BASE_URL = $_SERVER['DOCUMENT_ROOT'].'/'.str_replace('\\', '/', __NAMESPACE__);
-	require $BASE_URL.'/lib/Autoloader.php';
+	$BASE_URL = $_SERVER['DOCUMENT_ROOT'];
+	require $BASE_URL.'/CLTools/lib/Autoloader.php';
 
 	// set http headers
-	Web::setHTTPHeaders();
+	// cache time is currently set to 120 seconds in order to balance caching w/ listing freshness
+	Web::setHTTPHeaders(120);
 
 	// set content template (data is loaded on-demand using CLData APIs
 	$contentHTML = '

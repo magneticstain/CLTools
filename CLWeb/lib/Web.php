@@ -24,12 +24,14 @@ namespace CLTools\CLWeb;
 		}
 		
 		// OTHER FUNCTIONS
-		public static function setHTTPHeaders()
+		public static function setHTTPHeaders($cacheTime = 3600, $contentType = '')
 		{
 			/*
 			 *  Purpose: set necessary HTTP headers; usually includes security and cache headers
 			 *
-			 *  Params: NONE
+			 *  Params:
+			 * 		* $cacheTime :: int :: amount of time to store data for, in seconds
+			 * 		* $contentType :: string :: content-type header value to be used to specify what type of content is being served
 			 *
 			 *  Returns: NONE
 			 *
@@ -37,6 +39,14 @@ namespace CLTools\CLWeb;
 			 * 		* https://www.owasp.org/index.php/OWASP_Secure_Headers_Project#tab=Headers
 			 */
 			
+			// normalize and validate cache time
+			$cacheTime = (int) $cacheTime;
+			if($cacheTime < 0)
+			{
+				throw new \Exception('invalid cache time supplied');
+			}
+			
+			// SECURITY
 			// HSTS
 			header('strict-transport-security: max-age=86400');
 			
@@ -54,6 +64,17 @@ namespace CLTools\CLWeb;
 			
 			// Cross-Domain Policies
 			header('X-Permitted-Cross-Domain-Policies: none');
+			
+			// CACHING
+			// Cache-Control
+			header('Cache-Control: max-age='.$cacheTime);
+			
+			// OTHER
+			// Content-Type
+			if(!empty($contentType))
+			{
+				header('Content-Type: application/json');
+			}
 		}
 		
 		public function generateHTML()
@@ -71,6 +92,7 @@ namespace CLTools\CLWeb;
 				<html lang="en">
 				<head>
 					<meta charset="UTF-8">
+					<meta name=viewport content="width=640, initial-scale=1">
 				
 					<title>CLWeb /:/ CLTools /:/ '.$this->subTitle.'</title>
 				
