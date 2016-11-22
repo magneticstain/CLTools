@@ -92,7 +92,8 @@ namespace CLTools\CLWeb;
 				<html lang="en">
 				<head>
 					<meta charset="UTF-8">
-					<meta name=viewport content="width=640, initial-scale=1">
+					<!-- <meta name=viewport content="width=640, initial-scale=1"> -->
+					<meta name=viewport content="width=device-width, initial-scale=1">
 				
 					<title>CLWeb /:/ CLTools /:/ '.$this->subTitle.'</title>
 				
@@ -132,13 +133,13 @@ namespace CLTools\CLWeb;
 					<!-- frameworks -->
 					<script src="/CLTools/CLWeb/static/js/jquery-3.1.1.min.js" rel="script"></script>
 					<!-- plugins -->
-					<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBM_drWAJQL9PqXD_IGMrjv-zKg4Yu12oY" rel="script"></script>
-					<script src="/CLTools/CLWeb/static/js/Chart.bundle.min.js" rel="script"></script>
+					<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBM_drWAJQL9PqXD_IGMrjv-zKg4Yu12oY" rel="script"></script>
+					<script async src="/CLTools/CLWeb/static/js/Chart.bundle.min.js" rel="script"></script>
 					<!-- custom -->
-					<script src="/CLTools/CLWeb/static/js/errorbot.js" rel="script"></script>
-					<script src="/CLTools/CLWeb/static/js/datatron.js" rel="script"></script>
-					<script src="/CLTools/CLWeb/static/js/statscream.js" rel="script"></script>
-					<script src="/CLTools/CLWeb/static/js/main.js" rel="script"></script>
+					<script async src="/CLTools/CLWeb/static/js/errorbot.js" rel="script"></script>
+					<script async src="/CLTools/CLWeb/static/js/datatron.js" rel="script"></script>
+					<script async src="/CLTools/CLWeb/static/js/statscream.js" rel="script"></script>
+					<script async src="/CLTools/CLWeb/static/js/main.js" rel="script"></script>
 				</body>
 				</html>
 			';

@@ -16,10 +16,6 @@ namespace CLTools;
 	require $BASE_URL.'/CLTools/lib/Autoloader.php';
 	require $BASE_URL.'/CLTools/CLData/conf/db.php';
 
-	// set http headers
-	// cache time is currently set to 120 seconds in order to balance caching w/ listing freshness
-	CLWeb\Web::setHTTPHeaders(120, 'Content-Type: application/json');
-
 	function generateOptions()
 	{
 		// convert GET vars to API query options
@@ -69,6 +65,19 @@ namespace CLTools;
 			'order'			=>	$order,
 			'limit'			=>	$limit
 		];
+	}
+	
+	// set HTTP headers
+	try {
+		// cache time is currently set to 120 seconds in order to balance caching w/ listing freshness
+		CLWeb\Web::setHTTPHeaders(120, 'Content-Type: application/json');
+	} catch(\Exception $e) {
+		error_log('CLTools :: CLData - CALC :: [ SEV: FATAL ] :: could not set HTTP headers :: [ MSG: '.$e->getMessage().' ]');
+		
+		// throw 503 status
+		http_response_code(503);
+		
+		exit(1);
 	}
 
 	// start calc engine

@@ -1,12 +1,13 @@
 # Cache Headers
 <ifmodule mod_headers.c>
-  # Cache images for a month
-  <filesmatch "\.(ico|flv|jpg|jpeg|png|gif|swf)$">
-    Header set Cache-Control "max-age=2678400, public"
-  </filesmatch>
+  # Cache images for a year
+  <filesMatch ".(jpg|jpeg|png|gif|ico)$">
+    Header set Cache-Control "max-age=31536000, public"
+  </filesMatch>
 
-  # Cache CSS and Javascripts for a week
-  <filesmatch "\.(css|js)$">
-    Header set Cache-Control "max-age=604800, public"
-  </filesmatch>
+  # Cache CSS and Javascript files for a week
+  <filesMatch ".(css|js)$">
+  Header set Cache-Control "max-age=604800, public"
+  </filesMatch>
 </ifmodule>
+
