@@ -65,8 +65,25 @@ Statscream.startBasicStats = function(){
 	var contentWrapper = $('#contentWrapper');
 	var statsWrapper = $('#stats');
 
+	// get original width if set and not 100%
+	var origWidth = statsWrapper.data('origWidth');
+	if(typeof origWidth === 'undefined')
+	{
+		if(statsWrapper.css('width') !== '100%')
+		{
+			// set current width as original width and save for later
+			origWidth = statsWrapper.css('width');
+			statsWrapper.data('origWidth', origWidth);
+		}
+		else
+		{
+			// set to default
+			origWidth = '232px';
+		}
+	}
+
 	statsWrapper.animate({
-		width: '232px'
+		width: origWidth
 	}, 500, function(){
 		// update stats html
 		statsWrapper.html('' +
@@ -159,7 +176,7 @@ Statscream.initializeAdvancedStatsInView = function(statsContainer){
 
 Statscream.createChart = function(ctx, type, datasetName, datasetLabels, dataSet){
 	/*
-	 Create chart using given canvas context obj and assorted options
+	    Create chart using given canvas context obj and assorted options
 	 */
 
 	// set global graph options
@@ -195,7 +212,7 @@ Statscream.createChart = function(ctx, type, datasetName, datasetLabels, dataSet
 
 Statscream.fetchChartData = function(apiUrl, dataSetName, chartWrapperSelector, chartType){
 	/*
-	 Query Calc and Metrics APIs to retrieve data w/ given params
+	    Query Calc and Metrics APIs to retrieve data w/ given params
 	 */
 
 	var labels = [];
@@ -242,13 +259,8 @@ Statscream.fetchChartData = function(apiUrl, dataSetName, chartWrapperSelector, 
 
 Statscream.loadGraphs = function(){
 	/*
-	 Load graphs, including their data, into view of the user
+	    Load graphs, including their data, into view of the user
 	 */
-
-	// initialize each graph
-	// var locPopChart = Statscream.createGraph(, 'bar');
-	// var listingsOverTimeChart = Statscream.createGraph($('#listingsOverTimeChart'), 'line');
-	// var rentOverTimeChart = Statscream.createGraph($('#rentOverTimeChart'), 'line');
 
 	// fetch data and update graphs
 	var apiBaseUrl = '/CLTools/CLData/api/v1/';
@@ -268,6 +280,10 @@ Statscream.startAdvancedStats = function(){
 	// expand stats section
 	statsSection = $('#stats');
 	statsWrapper = $('#statsWrapper');
+
+	// save original width of stats wrapper for use when going back to basic stats
+	statsWrapper.data('origWidth', statsWrapper.css('width'));
+
 	statsSection.animate({
 		width: '100%'
 	}, 500, function(){

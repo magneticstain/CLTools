@@ -4,14 +4,12 @@
     Stylesheet for all stat-related styles
 */
 
-
-
 #stats {
     float: left;
     font-family: 'Montserrat', sans-serif;
     overflow: auto;
     text-align: center;
-    width: 232px;
+    min-width: 128px;
 }
 
 #statsTitle {
@@ -34,6 +32,10 @@
     letter-spacing: 2px;
 }
 
+/*#statsWrapper {*/
+    /*margin: 0 16px;*/
+/*}*/
+
 #stats .statContainer {
     margin-top: 24px;
 }
@@ -50,7 +52,7 @@
 #stats .statContainer p {
     color: #3C92CA;
     font-size: 32px;
-    margin: 16px 0;
+    margin: 16px 8px;
 }
 
 .statsButton {

@@ -131,10 +131,10 @@ namespace CLTools\CLWeb;
 				
 					<!-- js -->
 					<!-- frameworks -->
-					<script src="/CLTools/CLWeb/static/js/jquery-3.1.1.min.js" rel="script"></script>
+					<script src="/CLTools/CLWeb/static/js/plugins/jquery-3.1.1.min.js" rel="script"></script>
 					<!-- plugins -->
 					<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBM_drWAJQL9PqXD_IGMrjv-zKg4Yu12oY" rel="script"></script>
-					<script async src="/CLTools/CLWeb/static/js/Chart.bundle.min.js" rel="script"></script>
+					<script async src="/CLTools/CLWeb/static/js/plugins/Chart.bundle.min.js" rel="script"></script>
 					<!-- custom -->
 					<script async src="/CLTools/CLWeb/static/js/errorbot.js" rel="script"></script>
 					<script async src="/CLTools/CLWeb/static/js/datatron.js" rel="script"></script>
