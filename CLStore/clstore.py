@@ -46,6 +46,7 @@ def readCLIParameters():
 	cliParser.add_argument(
 		'-s', '--searchsleeptime', help='Length to wait between search queries in seconds (default: 600)',
 		required=False, type=int)
+	cliParser.add_argument('-v', '--verbosity', help='How verbose the logs will be // CRITICAL : ERROR : WARNING : INFO (DEFAULT) : DEBUG', required=False)
 
 	# parse arguments and return them
 	return cliParser.parse_args()
@@ -74,6 +75,7 @@ def main():
 		dbPort = runningConfig.config.get('database', 'db_port', 1)
 		# logging
 		logFile = runningConfig.config.get('logging', 'log_file')
+		logVerbosityLvl = runningConfig.config.get('logging', 'log_verbosity_lvl')
 		# search
 		searchSort = runningConfig.config.get('search', 'search_sort')
 		searchResultCnt = int(runningConfig.config.get('search', 'search_result_count'))
@@ -93,6 +95,10 @@ def main():
 		# search sleep time specified as CLI variable and should override the conf value
 		searchSleepTime = cliParams.searchsleeptime
 
+	if cliParams.verbosity:
+		# log verbosity level specified, override config file value
+		logVerbosityLvl = cliParams.verbosity
+
 	# initialize components
 	# CL Housing handler
 	CLHousing = CraigslistHousing(
@@ -108,7 +114,7 @@ def main():
 	)
 
 	# Logging
-	CLLogger = CLLogging(logFile)
+	CLLogger = CLLogging(logFile, logVerbosityLvl)
 
 	# Listing Engine
 	dbConfig = {'host': dbHost, 'user': dbUser, 'pass': dbPass, 'name': dbName, 'port': dbPort}

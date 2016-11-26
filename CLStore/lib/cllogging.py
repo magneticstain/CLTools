@@ -31,21 +31,24 @@ class CLLogging:
 	name = 'CLLogging'
 	config = ''
 	logger = ''
+	verbosityLvl = 0
 
-	def __init__(self, logFile='/var/log/cltools/cltools.log', logFormat='%(asctime)s [ %(levelname)s ] %(message)s', dateFormat='%m/%d/%Y %I:%M:%S %p'):
+	def __init__(self, logFile='/var/log/cltools/cltools.log', logVerbosityLvl='INFO',
+				 logFormat='%(asctime)s [ %(levelname)s ] %(message)s', dateFormat='%m/%d/%Y %I:%M:%S %p'):
 		"""
 		Constructor for CLLogging class
 		"""
 
 		# create logger
-		self.initializeLogger(logFile, logFormat, dateFormat)
+		self.initializeLogger(logFile, logVerbosityLvl, logFormat, dateFormat)
 
-	def initializeLogger(self, logFile='/var/log/cltools/cltools.log', logFormat='%(asctime)s [ %(levelname)s ] %(message)s', dateFormat='%m/%d/%Y %I:%M:%S %p'):
+	def initializeLogger(self, logFile='/var/log/cltools/cltools.log', logVerbosityLvl='INFO', logFormat='%(asctime)s [ %(levelname)s ] %(message)s', dateFormat='%m/%d/%Y %I:%M:%S %p'):
 		"""
 		Purpose: Define a logger object to be used for sending logs
 
 		Parameters:
 			* logFile :: string :: file to log to :: [OPTIONAL]
+			* logVerbosityLvl :: string :: minimum log level threshold :: [OPTIONAL]
 			* logFormat :: string :: formatting that logs message should be in :: [OPTIONAL]
 			* dateFormat :: string :: formatting of log timestamp, if applicable :: [OPTIONAL]
 
@@ -67,7 +70,14 @@ class CLLogging:
 		# associate handler with logger
 		self.logger.addHandler(logFileHandler)
 
-	def logMsg(self, log, logLevel):
+		# Verbosity Level
+		# normalize log verbosity level to all uppercase
+		logVerbosityLvl = logVerbosityLvl.upper()
+		# set numerical log level of logger based on logLevel string
+		numericalLogLevel = getattr(logging, logVerbosityLvl)
+		self.logger.setLevel(numericalLogLevel)
+
+	def logMsg(self, log, logLevel = 'INFO'):
 		"""
 		Purpose: Logging strings to a given log file
 
@@ -78,13 +88,6 @@ class CLLogging:
 
 		Returns: NONE
 		"""
-
-		# Verbosity Level
-		# normalize log verbosity level to all uppercase
-		logLevel.upper()
-		# set numerical log level of logger based on logLevel string
-		numericalLogLevel = getattr(logging, logLevel)
-		self.logger.setLevel(numericalLogLevel)
 
 		# write log using appropriate function based on log severity level
 		getattr(self.logger, logLevel.lower())(log)
