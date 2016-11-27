@@ -22,7 +22,7 @@ namespace CLTools\CLData;
 			$dataField = 'price',
 			$searchString = '')
 		{
-			// no sanatization needed, results will be verified as they're utilized
+			// no sanatization needed, results will be verified as they're utilized within functions
 			parent::__construct($dbConfig);
 			$this->setMeasurementType($measurement);
 			$this->setDataField($dataField);
@@ -38,7 +38,7 @@ namespace CLTools\CLData;
 			 * 	Params:
 			 * 		$measurement :: string :: measurement to calculate
 			 *
-			 * 	Returns: various data types
+			 * 	Returns: bool
 			 */
 			
 			$measurementTypesAvailable = array(
@@ -61,18 +61,18 @@ namespace CLTools\CLData;
 			}
 			
 			// not approved >:|
-			throw new \Exception('invalid measurement type provided!');
+			throw new \Exception('invalid measurement type provided');
 		}
 		
 		public function setDataField($dataField)
 		{
 			/*
-			 * 	Purpose: set data field to fetch from a set list
+			 * 	Purpose: select data field to fetch from a set list
 			 *
 			 * 	Params:
 			 * 		$dataField :: string :: data field to fetch
 			 *
-			 * 	Returns: various data types
+			 * 	Returns: bool
 			 */
 			
 			$availableDataFields = array(
@@ -94,7 +94,7 @@ namespace CLTools\CLData;
 			}
 			
 			// not approved >:|
-			throw new \Exception('invalid data field provided!');
+			throw new \Exception('invalid data field provided');
 		}
 
 		// OTHER FUNCTIONS
@@ -103,10 +103,13 @@ namespace CLTools\CLData;
 			/*
 			 * 	Purpose: calculate metric based on measurement type set and field
 			 *
-			 * 	Params: NONE
+			 * 	Params:
+			 * 		* $sort :: str :: sort order of SQL results
+			 * 		* $limit :: int :: max number of results to return (<0 = unlimited)
 			 *
-			 * 	Returns: various data types
+			 * 	Returns: NONE
 			 */
+			
 			$sqlParams = array();
 			$lcMeasurement = strtolower($this->measurement);
 			
@@ -160,7 +163,7 @@ namespace CLTools\CLData;
 				}
 				// limit
 				// normalize
-				$limit = filter_var($limit, FILTER_SANITIZE_NUMBER_INT);
+				$limit = filter_var($limit, \FILTER_SANITIZE_NUMBER_INT);
 				if(0 < $limit)
 				{
 					$sql .= '

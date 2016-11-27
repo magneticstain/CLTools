@@ -30,7 +30,7 @@ namespace CLTools\CLWeb;
 			 *  Purpose: set necessary HTTP headers; usually includes security and cache headers
 			 *
 			 *  Params:
-			 * 		* $cacheTime :: int :: amount of time to store data for, in seconds
+			 * 		* $cacheTime :: int :: amount of time to store data for, in seconds (default = 3600s = 1 hour)
 			 * 		* $contentType :: string :: content-type header value to be used to specify what type of content is being served
 			 *
 			 *  Returns: NONE
@@ -39,7 +39,7 @@ namespace CLTools\CLWeb;
 			 * 		* https://www.owasp.org/index.php/OWASP_Secure_Headers_Project#tab=Headers
 			 */
 			
-			// normalize and validate cache time
+			// normalize cache time to integer and validate it
 			$cacheTime = (int) $cacheTime;
 			if($cacheTime < 0)
 			{
@@ -73,7 +73,7 @@ namespace CLTools\CLWeb;
 			// Content-Type
 			if(!empty($contentType))
 			{
-				header('Content-Type: application/json');
+				header($contentType);
 			}
 		}
 		
@@ -92,7 +92,6 @@ namespace CLTools\CLWeb;
 				<html lang="en">
 				<head>
 					<meta charset="UTF-8">
-					<!-- <meta name=viewport content="width=640, initial-scale=1"> -->
 					<meta name=viewport content="width=device-width, initial-scale=1">
 				
 					<title>CLWeb /:/ CLTools /:/ '.$this->subTitle.'</title>
@@ -147,8 +146,7 @@ namespace CLTools\CLWeb;
 		
 		public function __toString()
 		{
-			// Overload of toString function in order to generate HTML when treated as a string
-			
+			// Overload of toString function in order to generate HTML when this class as an obj is treated as a string
 			return $this->generateHTML();
 		}
 	}

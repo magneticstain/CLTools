@@ -21,7 +21,7 @@ namespace CLTools\CLData;
 
 		public function __construct($dbConnConfig, $listingID = 0, $dataField = '*')
 		{
-			// no sanatizing is really needed because mysql and its drivers/libraries should do all the sanatizing we need
+			// no sanatizing is really needed because mysql and its drivers/libraries should do all the sanitizing we need
 			$this->dbConnConfig = $dbConnConfig;
 
 			// start db connection
@@ -30,12 +30,9 @@ namespace CLTools\CLData;
 			// set local vars
 			$this->listingID = $listingID;
 			$this->dataField = $dataField;
-
-//			throw new \Exception('testing');
 		}
 		
 		// SETTERS
-		
 		public function setData($data)
 		{
 			/*
@@ -49,11 +46,11 @@ namespace CLTools\CLData;
 			$this->data = $data;
 		}
 
-		# GETTERS
+		// GETTERS
 		public function getData($rawData = false, $key = 0)
 		{
 			/*
-			 *  Purpose: getter for private data variable
+			 *  Purpose: getter for private variable data
 			 *
 			 *  Params:
 			 * 		$rawData :: bool :: return raw data or processed data
@@ -113,7 +110,7 @@ namespace CLTools\CLData;
 			return $dataSet[$this->dataField];
 		}
 
-		# OTHER FUNCTIONS
+		// OTHER FUNCTIONS
 		public function connectToDb()
 		{
 			/*
@@ -162,28 +159,30 @@ namespace CLTools\CLData;
 			 *  Purpose: retrieve listing data from database
 			 *
 			 *  Params:
-			 * 		* $sortOpt :: field to sort results by
-			 * 		* $sortOrder :: order to sort results by
-			 * 		* $resultLimit :: max number of records to return
-			 * 		* $resultFormat :: format to set fetched data in
+			 * 		* $sortOpt :: string :: field to sort results by
+			 * 		* $sortOrder :: string :: order to sort results by
+			 * 		* $resultLimit :: int :: max number of records to return
+			 * 		* $resultFormat :: PDO format val :: format to set fetched data in
 			 *
 			 *  Returns: array
 			 */
 
 			// list and set approved sort and sort order options
-			$sortOpts = ['listing_id', 'post_date', 'location', 'price'];
-			$sortOrderOpts = ['asc', 'desc'];
+			// user can also sort by field numbers
+			$approvedSortOpts = ['listing_id', 'post_date', 'location', 'price'];
+			$approvedSortOrderOpts = ['asc', 'desc'];
 			$sortSqlClause = '';
-			if(in_array($sortOpt, $sortOpts, true) || (0 < $sortOpt && $sortOpt <= 50))
+			if(in_array($sortOpt, $approvedSortOpts, true) || (0 < $sortOpt && $sortOpt <= 50))
 			{
 				$sortSqlClause = 'ORDER BY '.$sortOpt;
 
 				// check for sort order option
-				if(in_array(strtolower($sortOrder), $sortOrderOpts, true))
+				if(in_array(strtolower($sortOrder), $approvedSortOrderOpts, true))
 				{
 					$sortSqlClause .= ' '.strtoupper($sortOrder);
 				}
 			}
+			
 			// validate given limit
 			$limitSqlClause = '';
 			if(0 < $resultLimit)
@@ -192,8 +191,10 @@ namespace CLTools\CLData;
 			}
 
 			// fetch listings
+			// check if all listings were requested or a specific one
 			if(strtolower($this->listingID === 'all'))
 			{
+				// all listings requested
 				// check if all fields were requested or a specific one
 				if(!empty($this->dataField) && $this->dataField !== '*' && $this->dataField !== 'listing_id')
 				{
@@ -213,7 +214,6 @@ namespace CLTools\CLData;
 						'.$sortSqlClause.'
 						'.$limitSqlClause.'
 				';
-//				echo $sql;
 
 				// prepare query
 				$sqlStmt = $this->dbConn->prepare($sql);
@@ -226,7 +226,7 @@ namespace CLTools\CLData;
 			}
 			elseif(isset($this->listingID) && !empty($this->listingID) && $this->listingID !== 0)
 			{
-				// fetch specific listing
+				// fetch all data for specific listing
 				$sql = '
 						SELECT
 							*
@@ -251,7 +251,7 @@ namespace CLTools\CLData;
 			}
 			else
 			{
-				// no listing ID set, retrieve last 5 listings by date
+				// no listing ID set, retrieve default: last 5 listings by date
 				$sql = '
 						SELECT
 							*

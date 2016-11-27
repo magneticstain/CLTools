@@ -16,10 +16,9 @@ namespace CLTools\CLWeb;
 	require $BASE_URL.'/CLTools/lib/Autoloader.php';
 
 	// set http headers
-	// cache time is currently set to 120 seconds in order to balance caching w/ listing freshness
-	Web::setHTTPHeaders(120);
+	Web::setHTTPHeaders();
 
-	// set content template (data is loaded on-demand using CLData APIs
+	// set content template (data is loaded on-the-fly using CLData APIs)
 	$contentHTML = '
 									<div id="stats">
 										<div id="statsTitle">

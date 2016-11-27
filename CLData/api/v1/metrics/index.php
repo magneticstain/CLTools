@@ -8,7 +8,7 @@ namespace CLTools;
 	 */
 
 	/*
-	 *  metrics/index.php - main script for calculations portion of API (i.e. what is the best month to rent? or Rent by Month of Year)
+	 *  metrics/index.php - main script for metrics portion of API (i.e. listings per month, rent prices over time, etc)
 	 */
 
 	// import config(s) and libraries

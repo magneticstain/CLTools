@@ -17,14 +17,14 @@ namespace CLTools;
 		{
 			$baseUrl = $_SERVER['DOCUMENT_ROOT'].'/';
 			
-			// convert class name to directory structure
+			// format full class name as directory structure
 			$classDirStructure = str_replace('\\', '/', $className);
 			
-			// get dir structure & class name
+			// separate dir structure & class name
 			$dirStructure = substr($classDirStructure, 0, strrpos($classDirStructure, '/'));
 			$class = strrchr($classDirStructure, '/');
 
-			// load class from file
+			// concatonate everything and load class from file
 			require $baseUrl.$dirStructure.'/lib/'.$class.'.php';
 		}
 	}

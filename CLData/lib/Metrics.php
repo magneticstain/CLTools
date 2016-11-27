@@ -8,7 +8,7 @@ namespace CLTools\CLData;
 	 */
 
 	/*
-	 *  Metrics.php - class containing metrics based on collected data
+	 *  Metrics.php - class containing logic for generating metrics based on collected data
 	 */
 
 	class Metrics extends Data
@@ -40,23 +40,24 @@ namespace CLTools\CLData;
 			 * 	Purpose: set given field if it matches one of the approved fields
 			 *
 			 * 	Params:
-			 * 		* $field :: str :: data field to measure metrics of
+			 * 		* $field :: string :: data field to measure metrics of
 			 *
 			 * 	Returns: bool
 			 */
 			
+			// initialize group of approved data fields
 			// NOTE: blank string indicates listing records in general
-			$availableDataFields = [
+			$approvedDataFields = [
 				'',
 				'location',
 				'price'
 			];
 			
-			// normalize data field param
+			// normalize field
 			$field = strtolower($field);
 			
 			// check if given field is approved for use with metrics
-			if(in_array($field, $availableDataFields, true))
+			if(in_array($field, $approvedDataFields, true))
 			{
 				// approved ❣◕ ‿ ◕❣
 				$this->field = $field;
@@ -65,7 +66,7 @@ namespace CLTools\CLData;
 			}
 			
 			// not approved (ಥ﹏ಥ)
-			throw new \Exception('invalid data field provided for metric generation!');
+			throw new \Exception('invalid data field provided for metric generation :: [ '.$field.' ]');
 		}
 		
 		public function setTimespan($timespan)
@@ -74,16 +75,16 @@ namespace CLTools\CLData;
 			 * 	Purpose: set given timespan if it matches one of the approved timespans
 			 *
 			 * 	Params:
-			 * 		* $timespan :: str :: timespan to measure metrics in
+			 * 		* $timespan :: string :: timespan to measure metrics in
 			 *
 			 * 	Returns: bool
 			 *
 			 * 	Dev Notes:
-			 * 		* [ 2016-10-31 ] - [JCP] - If you update the available timespans in this function, you must also
+			 * 		* [ 2016-10-31 ] - [JCP] - If you update the approved timespans in this function, you must also
 			 * 			update generateMetrics accordingly
 			 */
 			
-			$availableTimespans = [
+			$approvedTimespans = [
 				'daily',
 				'monthly',
 				'yearly'
@@ -93,7 +94,7 @@ namespace CLTools\CLData;
 			$timespan = strtolower($timespan);
 			
 			// check if timespan is approved
-			if(in_array($timespan, $availableTimespans, true))
+			if(in_array($timespan, $approvedTimespans, true))
 			{
 				// approved ^_^
 				$this->timespan = $timespan;
@@ -102,7 +103,7 @@ namespace CLTools\CLData;
 			}
 			
 			// not approved V_V
-			throw new \Exception('invalid timespan provided!');
+			throw new \Exception('invalid timespan provided :: [ '.$timespan.' ]');
 		}
 		
 		public function setOperator($operator)
@@ -111,7 +112,7 @@ namespace CLTools\CLData;
 			 * 	Purpose: set given operator if it matches one of the approved SQL operators
 			 *
 			 * 	Params:
-			 * 		* $operator :: str :: operator to perform metrics on
+			 * 		* $operator :: string :: operator to perform metrics on
 			 *
 			 * 	Returns: bool
 			 */
@@ -134,22 +135,21 @@ namespace CLTools\CLData;
 			}
 			
 			// not approved V_V
-			throw new \Exception('invalid SQL operator provided!');
+			throw new \Exception('invalid SQL operator provided :: [ '.$operator.' ]');
 		}
 		
 		// OTHER FUNCTIONS
 		public function translateCanonicalTimespanToFieldNum()
 		{
 			/*
-			 * 	Purpose: calculate a list of distinct timespan when a field is set, based on the canonical timespan
+			 * 	Purpose: calculate the number of fields of the time value to take into account based on the canonical timespan
 			 *
 			 * 	Params: NONE
 			 *
-			 * 	Returns: array
+			 * 	Returns: int
 			 */
 			
 			// make determination
-			$fieldNum = 0;
 			switch($this->timespan)
 			{
 				case 'daily':
@@ -165,7 +165,7 @@ namespace CLTools\CLData;
 					
 					break;
 				default:
-					throw new \Exception('invalid timespan provided for metrics generation!');
+					throw new \Exception('invalid timespan provided for metrics generation :: [ '.$this->timespan.' ]');
 			}
 			
 			return $fieldNum;
@@ -174,17 +174,18 @@ namespace CLTools\CLData;
 		public function generateDistinctTimespans($returnDataDirectly = false)
 		{
 			/*
-			 * 	Purpose: calculate a list of distinct timespan when a field is set, based on the canonical timespan
+			 * 	Purpose: calculate a list of distinct timespans available in our data
 			 *
-			 * 	Params: NONE
+			 * 	Params:
+			 * 		* $returnDataDirectly :: bool :: if set to true, return all data instead of settings it inside parent obj
 			 *
 			 * 	Returns: array
 			 */
 			
-			// calculate field count
+			// calculate field count from canonical timespan
 			$fieldCnt = $this->translateCanonicalTimespanToFieldNum();
 			
-			// generate sql to scan the database
+			// generate sql to scan the database for all timespans
 			$sql = '
 					SELECT
 						left(post_date, ?),
@@ -230,8 +231,10 @@ namespace CLTools\CLData;
 			 * 	Returns: string
 			 */
 			
-			// check what kind of operator we have so we can generate correct select and order by SQL clauses, and
-			// determine whether to unwrap the sql results (usually done with single-record results in order to remove unnecessary arrays)
+			/*
+			 * check what kind of operator we have so we can generate the correct select and order by SQL clauses, and
+			 * determine whether to unwrap the sql results (usually done with single-record results in order to remove unnecessary arrays)
+			 */
 			if($this->operator === 'AVG')
 			{
 				$sqlSelectClause = $this->operator.'('.$this->field.')';
@@ -270,10 +273,9 @@ namespace CLTools\CLData;
 			 * 	Returns: array
 			 */
 			
-			$unwrapResults = false;
 			$result = [];
 			
-			// get distict timespan values
+			// get distinct timespan values
 			$timespanVals = $this->generateDistinctTimespans(true);
 			
 			// check if field name is set and multiple queries are needed
@@ -313,7 +315,7 @@ namespace CLTools\CLData;
 						// check if single-record result was returned
 						if(count($sqlResults[0]) === 1)
 						{
-							// single-record result, add as raw value
+							// single-record result, add as single raw value
 							array_push($currentResults, $sqlResults[0][0]);
 						}
 						else
@@ -322,7 +324,7 @@ namespace CLTools\CLData;
 							array_push($currentResults, $sqlResults);
 						}
 						
-						// add current results to results collection
+						// add current set of results to results collection
 						array_push($result, $currentResults);
 					}
 				}
@@ -334,7 +336,7 @@ namespace CLTools\CLData;
 				$result = $timespanVals;
 			}
 			
-			// set result array as data
+			// by default, set result array as data
 			parent::setData($result);
 		}
 	}
