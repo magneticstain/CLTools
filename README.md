@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/magneticstain/CLTools.png?label=ready&title=Ready)](https://waffle.io/magneticstain/CLTools)
 # CLTools
 A set of python and PHP scripts that use Craigslist to help find the perfect apartment.
 
