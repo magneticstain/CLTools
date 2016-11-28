@@ -1,4 +1,5 @@
 [![Stories in Ready](https://badge.waffle.io/magneticstain/CLTools.png?label=ready&title=Ready)](https://waffle.io/magneticstain/CLTools)
+[![Build Status](https://travis-ci.org/magneticstain/CLTools.svg?branch=master)](https://travis-ci.org/magneticstain/CLTools)
 # CLTools
 A set of python and PHP scripts that use Craigslist to help find the perfect apartment.
 
@@ -15,6 +16,9 @@ A set of python and PHP scripts that use Craigslist to help find the perfect apa
   
 ## Getting Started
 ### Install
+To install CLTools, run the install script `install.sh`. This script will run through each step of installing CLTools:
+* copying application files
+* configuring file permissions
 
 ### Configuration
 #### Apache
