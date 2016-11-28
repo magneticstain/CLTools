@@ -1,5 +1,5 @@
 /**
- *  CLWeb // datatron.js
+ *  CLWeb // Datatron.js
  *
  *  A JS library for interfacing with data models (e.g. listings) and APIs
  */
@@ -37,7 +37,7 @@ DataTron.prototype.setMapMarker = function(map, pos, infoWindow){
         // add infoWindow to group
         DataTron.infoWindows.push(infoWindow);
 
-        // add event listener
+        // add event listener for when opening a new map marker
         marker.addListener('click', function(){
             DataTron.closeAllInfoWindows();
             infoWindow.open(map, marker);
@@ -53,14 +53,13 @@ DataTron.setListingsAsMarkers = function(map){
     var IW = null;
 
     // Query CLData for listing data with given parameters
-    var apiUrl = '/CLTools/CLData/api/v1/data/all/';
-
     $.ajax({
-        url: apiUrl,
+        url: '/CLTools/CLData/api/v1/data/all/',
         dataType: 'json',
         success: function(listingData){
             if(listingData.success)
             {
+                // traverse through each listing
                 $.each(listingData.data, function(i, listing){
                     // if geotag exists, set marker
                     if(listing.geotag !== 'None')
@@ -78,7 +77,7 @@ DataTron.setListingsAsMarkers = function(map){
                             '<p><strong class="listingLocation">' + listing.location + '</strong>, <i class="listingPrice">$' + listing.price + '</i></p>'
                         });
 
-                        // create marker
+                        // create and set marker w/ IW
                         DataTron.prototype.setMapMarker(map, listingPos, IW);
                     }
                 });
@@ -97,7 +96,7 @@ DataTron.generateListingMap = function(){
         Generates a map using the Google Maps JS API and data from the CLData API
      */
 
-    // generate Map()
+    // generate generic Map()
     var map = new google.maps.Map(
         document.getElementById('map'), {
             center: {
@@ -118,18 +117,17 @@ DataTron.generateListingMap = function(){
     };
     if(navigator.geolocation)
     {
+        // user is using a modern browser
         navigator.geolocation.getCurrentPosition(function(currPos){
-            // set position as current location
+            // current location retrieved successfully, set as current map position
             pos.lat = currPos.coords.latitude;
             pos.lng = currPos.coords.longitude;
-
-            // set center of map to current location
             map.setCenter(pos);
         });
     }
     else
     {
-        // center on default position
+        // user is using a dusty, ancient browser so we'll just center on the default position
         map.setCenter(pos);
     }
 };
@@ -152,9 +150,6 @@ DataTron.formatReturnData = function(dataType, data){
 
             // prepend dollar sign
             formattedData = '$' + formattedData;
-
-            break;
-        case 'DIMENSIONS':
 
             break;
         default:

@@ -21,8 +21,11 @@ footer .linkWrapper {
     vertical-align: middle;
 }
 
-.linkWrapper a:link {
+.linkWrapper a:link, .linkWrapper a:visited {
     color: #EFEFEF;
+}
+
+.linkWrapper a:link {
     letter-spacing: 2px;
     margin: 0 5px;
     padding: 2px;
@@ -31,8 +34,4 @@ footer .linkWrapper {
 
 .linkWrapper a:hover {
     border-bottom: 4px solid;
-}
-
-.linkWrapper a:visited {
-    color: #EFEFEF;
 }

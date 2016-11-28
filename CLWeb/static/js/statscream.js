@@ -108,7 +108,7 @@ Statscream.startBasicStats = function(){
 		// remove any previously-loaded maps
 		$('#map').remove();
 
-		// append map div after stats
+		// append new map div after stats
 		contentWrapper.append('<div title="Listings Map - view all collected listings!" id="map"></div>');
 
 		// load basic stats
@@ -117,7 +117,7 @@ Statscream.startBasicStats = function(){
 		// generate map
 		DataTron.generateListingMap();
 
-		// add handler for adv stats button
+		// add event handler for adv stats button
 		$('.advanced').click(function(){
 			Statscream.startAdvancedStats();
 		});
@@ -133,7 +133,6 @@ Statscream.initializeAdvancedStatsInView = function(statsContainer){
 	    Initialize advanced stats headings and wrappers in preparation for graphing of data
 	 */
 
-	// the new stats will be appended to the html currently within the container
 	var html = '';
 	var canvasHeight = 128;
 
@@ -218,11 +217,12 @@ Statscream.fetchChartData = function(apiUrl, dataSetName, chartWrapperSelector, 
 	var labels = [];
 	var data = [];
 
+	// query API
 	$.ajax({
 		url: apiUrl,
 		dataType: 'json',
 		success: function(apiData){
-			// check if API req was successful
+			// check if API request was successful
 			if(apiData.success)
 			{
 				// iterate over results

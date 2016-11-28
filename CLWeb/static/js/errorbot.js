@@ -1,5 +1,5 @@
 /**
- *  CLWeb // errorbot.js
+ *  CLWeb // Errorbot.js
  *
  *  A JS library for displaying and delivering errors
  */
@@ -55,7 +55,7 @@ ErrorBot.prototype.displayError = function(delayTimeMS){
     if(delayTimeMS === 0 || 2 <= this.severity)
     {
         // keep slid down/enable persistent display until user clicks the error modal
-        // ( always enable persistent display with CRIT errors )
+        // NOTE: ( always enable persistent display with CRIT errors )
         errorModal.slideDown();
 
         // change cursor based on if help article is available (TODO)
@@ -74,7 +74,7 @@ ErrorBot.prototype.displayError = function(delayTimeMS){
         delayTimeMS = 5000;
     }
 
-    // unhides the error modal to user
+    // display the error modal to user
     errorModal.slideDown().delay(delayTimeMS).slideUp();
 
     // if the user hovers over the error modal, stay down until they untarget the error modal

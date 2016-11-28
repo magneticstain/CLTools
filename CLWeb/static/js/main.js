@@ -13,6 +13,7 @@ $(document).ready(function(){
     }
     else
     {
+        // otherwise, start basic stats by default
         Statscream.startBasicStats()
     }
 });

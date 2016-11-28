@@ -21,3 +21,10 @@
 #errorModal p {
     font: 16px 'Dosis', sans-serif;
 }
+
+#map .errorWrapper {
+    font: 48px 'Bungee Inline', cursive;
+    margin: 0 auto;
+    padding: 8% 0;
+    text-align: center;
+}
