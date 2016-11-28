@@ -15,7 +15,6 @@ A set of python and PHP scripts that use Craigslist to help find the perfect apa
 ## Getting Started
 ### Install
 
-
 ### Configuration
 #### Apache
 
