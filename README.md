@@ -45,6 +45,65 @@ When setting up a site in Apache/nginx for CLTools, you will need to make the ro
 
 For example: if CLTools, and the contents of the `CLTools` directory, are deployed to `/opt`, `/opt` would need to be the Apache site's root directory.
 
+Here is an example Apache config that can be based off of:
+```apacheconfig
+<IfModule mod_ssl.c>
+    <VirtualHost _default_:443>
+	ServerName dev.carlso.net
+
+        DocumentRoot /var/www/html
+
+        <Directory /var/www/html/>
+            Options Indexes FollowSymLinks
+            AllowOverride All
+            Order allow,deny
+            Allow from all
+            Require all granted
+        </Directory>
+
+        LogLevel warn
+
+        ErrorLog /var/log/cltools/clweb-errors.log
+        CustomLog /var/log/cltools/clweb-access_log combined
+
+        SSLEngine on
+
+        # Replace these with your own TLS certificates
+        SSLCertificateFile  <SSL_CERT_FILE>
+        SSLCertificateKeyFile <SSL_KEY_FILE>
+
+        <FilesMatch "\.(cgi|shtml|phtml|php)$">
+            SSLOptions +StdEnvVars
+        </FilesMatch>
+
+        BrowserMatch "MSIE [2-6]" \
+            nokeepalive ssl-unclean-shutdown \
+            downgrade-1.0 force-response-1.0
+        # MSIE 7 and newer should be able to use keepalive
+        BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
+
+        # Cipherlist [ via cipherli.st ]
+        SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
+        SSLProtocol All -SSLv2 -SSLv3
+        SSLHonorCipherOrder On
+        # Requires Apache >= 2.4
+        SSLCompression off
+
+	# compress text, html, javascript, css, xml, json:
+	AddOutputFilterByType DEFLATE text/plain
+	AddOutputFilterByType DEFLATE text/html
+	AddOutputFilterByType DEFLATE text/xml
+	AddOutputFilterByType DEFLATE text/css
+	AddOutputFilterByType DEFLATE application/xml
+	AddOutputFilterByType DEFLATE application/xhtml+xml
+	AddOutputFilterByType DEFLATE application/rss+xml
+	AddOutputFilterByType DEFLATE application/javascript
+	AddOutputFilterByType DEFLATE application/x-javascript
+	AddOutputFilterByType DEFLATE application/json
+    </VirtualHost>
+</IfModule>
+```
+
 #### CLTools Database Settings
 After setting up CLTools for your web server software, the next thing we will need to do to complete the configuration is update the database settings to work with your environment.
 To do that, update the respective variables in each of the config files before with the correct values:
