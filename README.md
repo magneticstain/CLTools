@@ -1,6 +1,7 @@
 [![Stories in Ready](https://badge.waffle.io/magneticstain/CLTools.png?label=ready&title=Ready)](https://waffle.io/magneticstain/CLTools)
 [![Coverage Status](https://coveralls.io/repos/github/magneticstain/CLTools/badge.svg?branch=master)](https://coveralls.io/github/magneticstain/CLTools?branch=master)
 [![Build Status](https://travis-ci.org/magneticstain/CLTools.svg?branch=master)](https://travis-ci.org/magneticstain/CLTools)
+
 # CLTools
 A set of python and PHP scripts that use Craigslist to help find the perfect apartment.
 
@@ -18,15 +19,23 @@ A set of python and PHP scripts that use Craigslist to help find the perfect apa
 ## Getting Started
 ### Install
 To install CLTools, run the install script `install.sh`. This script will run through each step of installing CLTools:
+
 * copying application files
 * configuring file permissions
+* configuring database
 
 ### Configuration
-#### Apache
+#### Apache/nginx
+When setting up a site in Apache/nginx for CLTools, you will need to make the root directory the directory that the `CLTools` directory is in.
 
+For example: if CLTools, and the contents of the `CLTools` directory, are deployed to /opt, /opt would need to be the Apache site's root directory.
 
 #### CLTools Database Settings
+After setting up CLTools for your web server software, the next thing we will need to do to complete the configuration is update the database settings to work with your environment.
+To do that, update the respective variables in each of the config files before with the correct values:
 
+* `CLData/conf/db.php`
+* `CLStore/conf/example.cfg` (or your customized config for CLStore)
 
 ## Services
 ### CLStore
