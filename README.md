@@ -28,7 +28,7 @@ To install CLTools, run the install script `install.sh`. This script will run th
 #### Apache/nginx
 When setting up a site in Apache/nginx for CLTools, you will need to make the root directory the directory that the `CLTools` directory is in.
 
-For example: if CLTools, and the contents of the `CLTools` directory, are deployed to /opt, /opt would need to be the Apache site's root directory.
+For example: if CLTools, and the contents of the `CLTools` directory, are deployed to `/opt`, `/opt` would need to be the Apache site's root directory.
 
 #### CLTools Database Settings
 After setting up CLTools for your web server software, the next thing we will need to do to complete the configuration is update the database settings to work with your environment.
