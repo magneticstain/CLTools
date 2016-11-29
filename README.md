@@ -9,6 +9,21 @@ A set of python and PHP scripts that use Craigslist to help find the perfect apa
 * https://www.dataquest.io/blog/apartment-finding-slackbot/
 
 ## Requirements
+### OS
+* Debian 6<=
+* RHEL/CentOS 6<=
+
+### Software
+* Apache
+* MySQL/MariaDB
+* PHP 5.4<=
+
+### Misc. Software/Libraries/Plugins
+#### PHP
+* PHP PEAR
+* php5-mysql
+
+#### Python
 * https://github.com/juliomalegria/python-craigslist
   * `pip install python-craigslist`
 * python mysqldb
