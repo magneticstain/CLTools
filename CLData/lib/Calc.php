@@ -176,11 +176,19 @@ namespace CLTools\CLData;
 			$stmt->execute($sqlParams);
 			
 			// fetch result
-			if(!$result = $stmt->fetchAll(\PDO::FETCH_NUM))
+			if(0 < $stmt->rowCount())
 			{
-				// request is bad
-				$pdoError = $stmt->errorInfo();
-				throw new \Exception('query could not be completed [ '.$pdoError[2].' ]');
+				if(!$result = $stmt->fetchAll(\PDO::FETCH_NUM))
+				{
+					// request is bad
+					$pdoError = $this->dbConn->errorInfo();
+					throw new \Exception('query could not be completed [ '.$pdoError[2].' ]');
+				}
+			}
+			else
+			{
+				// no results found, set empty array as results
+				$result = [];
 			}
 			
 			// set result array as data

@@ -88,5 +88,5 @@ ENV/
 .idea/
 
 # Project conf settings
-#db.php
+db.php
 #main_dev.cfg

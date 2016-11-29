@@ -13,7 +13,7 @@ namespace CLTools\CLData;
 
 	$DB_CONFIG_OPTIONS = [
 		'dbUser' => 'cltools',
-		'dbPass' => '',
+		'dbPass' => '5Wt2pX93',
 		'dbHost' => '127.0.0.1',
 		'dbPort' => 3306,
 		'dbName' => 'cltools'

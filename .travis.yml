@@ -4,9 +4,9 @@ php:
   - '5.4'
   - '5.5'
   - '5.6'
-  - '7.0'
 before_script:
   - sudo apt-get update -qq
+  - sudo apt-get install -qq mysql-server
   - sudo apt-get install -qq apache2 libapache2-mod-fastcgi
   # enable php-fpm
   - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
@@ -17,3 +17,4 @@ before_script:
   - sudo cp -f build/travis-ci-apache /etc/apache2/sites-available/default
   - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/default
   - sudo service apache2 restart
+script: build/build.sh

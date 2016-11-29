@@ -104,8 +104,22 @@ Here is an example Apache config that can be based off of:
 </IfModule>
 ```
 
+##### Modules
+For Apache, the following modules will also need to be enabled:
+* mod_ssl
+* mod_rewrite
+* mod_headers
+* mod_deflate
+
 #### CLTools Database Settings
-After setting up CLTools for your web server software, the next thing we will need to do to complete the configuration is update the database settings to work with your environment.
+After setting up CLTools for your web server software, we'll need to create a service account in MySQL for CLTools. 
+Commands may vary in your environment, but this example should work for most:
+```mysql
+GRANT SELECT,INSERT,UPDATE,DELETE ON cltools.* TO cltools@'%' IDENTIFIED BY '<PASSWORD>';
+FLUSH PRIVILEGES;
+```
+
+After configuring the service account, the next thing we will need to do to complete the configuration is update the database settings within CLTools to work with your environment.
 To do that, update the respective variables in each of the config files before with the correct values:
 
 * `CLData/conf/db.php`

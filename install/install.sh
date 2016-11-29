@@ -20,26 +20,46 @@ then
     APP_DIR="/opt/cltools/"
 fi
 
-echo "$LG_LINE_BRK"
-
-echo "Creating directory..."
+echo "Creating application directory..."
 mkdir $APP_DIR > /dev/null 2>&1
 
 echo "$LG_LINE_BRK"
 
-echo "Moving files..."
-rsync -anv ./ $APP_DIR
+# create log folder if it doesn't exist
+read -p "Directory to write application logs to? [Default: /var/log/cltools/]: " LOG_DIR
+if [ -z "$LOG_DIR" ]
+then
+    # use default value
+    LOG_DIR="/var/log/cltools/"
+fi
+
+echo "Creating log directory..."
+mkdir $LOG_DIR > /dev/null 2>&1
 
 echo "$LG_LINE_BRK"
 
+# move application files
+echo "Moving files..."
+rsync -av ./ $APP_DIR
+
+echo "$LG_LINE_BRK"
+
+# configure file permissions
 echo "Setting permissions..."
-chgrp -R www-data "$APP_DIR/CLData" "$APP_DIR/CLWeb"
+# app files
+chown -R root:www-data "${APP_DIR}CLData" "${APP_DIR}CLWeb"
 chmod -R 775 $APP_DIR
+# log files
+chown -R root:adm "$LOG_DIR"
+chmod 644 "$LOG_DIR"
 
 echo "$LG_LINE_BRK"
 
 echo "Configuring database..."
 echo "Please enter the password for the MySQL root user below whenever prompted:"
+echo "Creating database..."
+mysql -u root -p -e "create database cltools"
+echo "Import table schema..."
 mysql -u root -p cltools < cltools.sql
 
 echo "$LG_LINE_BRK"
