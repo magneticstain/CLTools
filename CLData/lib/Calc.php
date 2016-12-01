@@ -184,6 +184,12 @@ namespace CLTools\CLData;
 					$pdoError = $this->dbConn->errorInfo();
 					throw new \Exception('query could not be completed [ '.$pdoError[2].' ]');
 				}
+				elseif(is_null($result[0][0]))
+				{
+					// calculation could not be made based on data; most likely there are no listings in the db yet
+					// set empty array as results
+					$result = [];
+				}
 			}
 			else
 			{

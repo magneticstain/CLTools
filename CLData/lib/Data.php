@@ -148,6 +148,44 @@ namespace CLTools\CLData;
 			// set connection variable to NULL, per PHP docs - http://php.net/manual/en/pdo.connections.php
 			$this->dbConn = null;
 		}
+		
+		public function getTotalNumberOfListings()
+		{
+			/*
+			 *  Purpose: get the total number of listings currently being stored in the db
+			 *
+			 *  Params: NONE
+			 *
+			 *  Returns: int
+			 */
+			
+			$numListings = 0;
+			
+			// generate sql
+			$sql = '
+					SELECT
+						COUNT(*)
+					FROM
+						listings
+			';
+			
+			// prepare query
+			$sqlStmt = $this->dbConn->prepare($sql);
+			
+			// execute query
+			$sqlStmt->execute();
+			
+			// fetch results
+			$results = $sqlStmt->fetch(\PDO::FETCH_OBJ);
+			
+			// set count if set
+			if(isset($results->count))
+			{
+				$numListings = $results->count;
+			}
+			
+			return $numListings;
+		}
 
 		public function retrieveListingFromDb(
 			$sortOpt = 'post_date',
@@ -164,8 +202,16 @@ namespace CLTools\CLData;
 			 * 		* $resultLimit :: int :: max number of records to return
 			 * 		* $resultFormat :: PDO format val :: format to set fetched data in
 			 *
-			 *  Returns: array
+			 *  Returns: NONE
 			 */
+			
+			// check if db is empty
+			if($this->getTotalNumberOfListings() === 0)
+			{
+				// no listings available, don't bother doing anything else and set data as blank array and exit the function
+				$this->data = [];
+				return;
+			}
 
 			// list and set approved sort and sort order options
 			// user can also sort by field numbers

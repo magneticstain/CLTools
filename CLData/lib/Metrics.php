@@ -270,70 +270,72 @@ namespace CLTools\CLData;
 			 *
 			 * 	Params: NONE
 			 *
-			 * 	Returns: array
+			 * 	Returns: NONE
 			 */
 			
 			$result = [];
 			
-			// get distinct timespan values
-			$timespanVals = $this->generateDistinctTimespans(true);
-			
-			// check if field name is set and multiple queries are needed
-			if(!empty($this->field))
+			// check if db is empty
+			if(0 < $this->getTotalNumberOfListings())
 			{
-				// in this case, we will need to cycle through each timespan and get the count by field for each one
-				// generate sql query
-				$sql = $this->generateMetricsSQL();
+				// listings are available in the db, continue with metrics
+				// get distinct timespan values
+				$timespanVals = $this->generateDistinctTimespans(true);
 				
-				// init stmt
-				$stmt = $this->dbConn->prepare($sql);
-				
-				// iterate through timespans
-				foreach($timespanVals as $timespan)
+				// check if field name is set and multiple queries are needed
+				if(!empty($this->field))
 				{
-					// initialize current results array w/ timespan
-					$currentResults = [
-						$timespan[0]
-					];
+					// in this case, we will need to cycle through each timespan and get the count by field for each one
+					// generate sql query
+					$sql = $this->generateMetricsSQL();
 					
-					// get field counts for timespan
-					// execute sql querys
-					$stmt->execute([
-						$timespan[0].'%'
-					]);
+					// init stmt
+					$stmt = $this->dbConn->prepare($sql);
 					
-					// fetch results
-					if(!$sqlResults = $stmt->fetchAll(\PDO::FETCH_NUM))
+					// iterate through timespans
+					foreach($timespanVals as $timespan)
 					{
-						// request is bad
-						$pdoError = $stmt->errorInfo();
-						throw new \Exception('query could not be completed [ PDOERR: { '.$pdoError[2].' } ]');
-					}
-					else
-					{
-						// add sql results to our current results array
-						// check if single-record result was returned
-						if(count($sqlResults[0]) === 1)
-						{
-							// single-record result, add as single raw value
-							array_push($currentResults, $sqlResults[0][0]);
-						}
-						else
-						{
-							// multiple records, add all sql results
-							array_push($currentResults, $sqlResults);
-						}
+						// initialize current results array w/ timespan
+						$currentResults = [
+							$timespan[0]
+						];
 						
-						// add current set of results to results collection
-						array_push($result, $currentResults);
+						// get field counts for timespan
+						// execute sql querys
+						$stmt->execute([
+							$timespan[0].'%'
+						]);
+						
+						// fetch results
+						if(!$sqlResults = $stmt->fetchAll(\PDO::FETCH_NUM))
+						{
+							// request is bad
+							$pdoError = $stmt->errorInfo();
+							throw new \Exception('query could not be completed [ PDOERR: { '.$pdoError[2].' } ]');
+						} else
+						{
+							// add sql results to our current results array
+							// check if single-record result was returned
+							if(count($sqlResults[0]) === 1)
+							{
+								// single-record result, add as single raw value
+								array_push($currentResults, $sqlResults[0][0]);
+							} else
+							{
+								// multiple records, add all sql results
+								array_push($currentResults, $sqlResults);
+							}
+							
+							// add current set of results to results collection
+							array_push($result, $currentResults);
+						}
 					}
+				} else
+				{
+					// metrics request is for listings in general
+					// this means we can just return the count by distinct timespans
+					$result = $timespanVals;
 				}
-			}
-			else
-			{
-				// metrics request is for listings in general
-				// this means we can just return the count by distinct timespans
-				$result = $timespanVals;
 			}
 			
 			// by default, set result array as data

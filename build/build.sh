@@ -22,6 +22,7 @@ echo "Import table schema..."
 mysql -u root cltools < ../install/cltools.sql
 
 # run any tests
+# PHPUnit
 
 echo "Build complete!"
 
