@@ -48,7 +48,17 @@ When setting up a site in Apache/nginx for CLTools, you will need to make the ro
 
 For example: if CLTools, and the contents of the `CLTools` directory, are deployed to `/opt`, `/opt` would need to be the Apache site's root directory.
 
-Here is an example Apache config that can be based off of:
+The recommended choice for installation and configuration is to place the files in the default install directory - `/opt/cltools/` - and then
+create a symlink from the web directory to the cltools application directory. For example, assuming the app directory is `/opt/cltools` and you
+want to keep the default Apache web root of `/var/www/html/`:
+
+```bash
+ln -s /opt/cltools/ /var/www/html/CLTools
+```
+
+##### Sample Apache Config
+Here is an example Apache config that you may want to base your configuration file off of. The only requirement is the clause `AllowOverride All`;
+this is needed for htaccess logic to work correctly:
 ```apacheconfig
 <IfModule mod_ssl.c>
     <VirtualHost _default_:443>
@@ -121,6 +131,7 @@ Commands may vary in your environment, but this example should work for most:
 GRANT SELECT,INSERT,UPDATE,DELETE ON cltools.* TO cltools@'%' IDENTIFIED BY '<PASSWORD>';
 FLUSH PRIVILEGES;
 ```
+You can of course change the host clause of the `GRANT` statement based on your environment for some additional access control.
 
 After configuring the service account, the next thing we will need to do to complete the configuration is update the database settings within CLTools to work with your environment.
 To do that, update the respective variables in each of the config files before with the correct values:
