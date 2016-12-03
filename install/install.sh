@@ -40,7 +40,7 @@ echo "$LG_LINE_BRK"
 
 # move application files
 echo "Moving files..."
-rsync -av ./ $APP_DIR
+rsync -av ../* $APP_DIR
 
 echo "$LG_LINE_BRK"
 
@@ -56,7 +56,7 @@ chmod 644 "$LOG_DIR"
 echo "$LG_LINE_BRK"
 
 echo "Configuring database..."
-echo "Please enter the password for the MySQL root user below whenever prompted:"
+echo "Please enter the password for the MySQL root user below whenever prompted."
 echo "Creating database..."
 mysql -u root -p -e "create database cltools"
 echo "Import table schema..."

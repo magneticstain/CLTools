@@ -1,5 +1,4 @@
 [![Stories in Ready](https://badge.waffle.io/magneticstain/CLTools.png?label=ready&title=Ready)](https://waffle.io/magneticstain/CLTools)
-[![Coverage Status](https://coveralls.io/repos/github/magneticstain/CLTools/badge.svg?branch=master)](https://coveralls.io/github/magneticstain/CLTools?branch=master)
 [![Build Status](https://travis-ci.org/magneticstain/CLTools.svg?branch=master)](https://travis-ci.org/magneticstain/CLTools)
 
 # CLTools
@@ -19,6 +18,10 @@ A set of python and PHP scripts that use Craigslist to help find the perfect apa
 * PHP 5.4<=
 
 ### Misc. Software/Libraries/Plugins
+
+#### General
+* rsync
+
 #### PHP
 * PHP PEAR
 * php5-mysql
