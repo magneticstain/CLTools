@@ -19,11 +19,11 @@ mkdir $LOG_DIR > /dev/null 2>&1
 echo "Creating database..."
 mysql -u root -e "create database cltools"
 echo "Import table schema..."
-mysql -u root cltools < ../install/cltools.sql
+mysql -u root cltools < install/cltools.sql
 
 # run any tests
 # PHPUnit
-phpunit -c ../phpunit.xml
+phpunit
 
 echo "Build complete!"
 
