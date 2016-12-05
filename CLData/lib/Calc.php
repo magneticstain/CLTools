@@ -22,7 +22,7 @@ namespace CLTools\CLData;
 			$dataField = 'price',
 			$searchString = '')
 		{
-			// no sanatization needed, results will be verified as they're utilized within functions
+			// no sanatizing needed, results will be verified as they're utilized within functions
 			parent::__construct($dbConfig);
 			$this->setMeasurementType($measurement);
 			$this->setDataField($dataField);

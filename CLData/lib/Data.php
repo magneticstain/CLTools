@@ -16,7 +16,7 @@ namespace CLTools\CLData;
 		public $dbConn = '';
 		protected $dbConnConfig = array();
 		public $listingID = 0;
-		protected $dataField = '';
+		public $dataField = '';
 		protected $data = array();
 
 		public function __construct($dbConnConfig, $listingID = 0, $dataField = '*')
@@ -44,6 +44,8 @@ namespace CLTools\CLData;
 			 */
 			
 			$this->data = $data;
+			
+			return true;
 		}
 
 		// GETTERS
@@ -53,7 +55,7 @@ namespace CLTools\CLData;
 			 *  Purpose: getter for private variable data
 			 *
 			 *  Params:
-			 * 		$rawData :: bool :: return raw data or processed data
+			 * 		$rawData :: bool :: return raw or post-processed data
 			 * 		$key :: string :: index key of data to return if data is array
 			 *
 			 *  Returns: various data types
@@ -88,13 +90,14 @@ namespace CLTools\CLData;
 			elseif(isset($dataSet[0]['id']))
 			{
 				// multiple listings included; traverse over each one separately and remove its ID field from the dataset
-				foreach($dataSet as $key => $listing)
+				foreach($dataSet as $dataSetKey => $listing)
 				{
-					unset($dataSet[$key]['id']);
+					unset($dataSet[$dataSetKey]['id']);
 				}
 			}
 
-			// return all info if no field name is specified
+			// return all info if a blank or general field name is specified and there's a single record
+//			var_dump($dataSet);
 			if($this->dataField === '' || $this->dataField === '*' || 1 < count($dataSet))
 			{
 				return $dataSet;

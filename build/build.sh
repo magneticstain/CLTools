@@ -23,6 +23,7 @@ mysql -u root cltools < ../install/cltools.sql
 
 # run any tests
 # PHPUnit
+phpunit -c ../phpunit.xml
 
 echo "Build complete!"
 

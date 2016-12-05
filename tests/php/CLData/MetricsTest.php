@@ -11,7 +11,10 @@ namespace CLTools\CLData;
  *  MetricsTest.php - PHP unit test for Metrics() library
  */
 
-class MetricsTest extends \PHPUnit_Framework_TestCase
-{
-	
-}
+//require('./CLData/lib/Metrics.php');
+//
+//class MetricsTest extends \PHPUnit_Framework_TestCase
+//{
+//	public function setUp(){ }
+//	public function tearDown(){ }
+//}
