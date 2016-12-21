@@ -11,7 +11,6 @@ namespace CLTools;
  *  CalcTest.php - PHP unit test for Calc() library
  */
 
-//require('./CLData/lib/Data.php');
 //require('./CLData/lib/Calc.php');
 //
 //class CalcTest extends \PHPUnit_Framework_TestCase
