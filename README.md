@@ -23,8 +23,7 @@ A set of python and PHP scripts that use Craigslist to help find the perfect apa
 * rsync
 
 #### PHP
-* PHP PEAR
-* php5-mysql
+* php-mysql
 
 #### Python
 * https://github.com/juliomalegria/python-craigslist
