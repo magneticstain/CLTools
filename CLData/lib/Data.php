@@ -167,7 +167,7 @@ namespace CLTools\CLData;
 			// generate sql
 			$sql = '
 					SELECT
-						COUNT(*)
+						COUNT(*) as count
 					FROM
 						listings
 			';
