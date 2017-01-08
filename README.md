@@ -4,6 +4,8 @@
 # CLTools
 A set of python and PHP scripts that use Craigslist to help find the perfect apartment.
 
+Demo: https://dev.carlso.net/CLTools/CLWeb/
+
 ## Inspired By
 * https://www.dataquest.io/blog/apartment-finding-slackbot/
 
