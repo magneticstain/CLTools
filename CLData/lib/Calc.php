@@ -92,7 +92,7 @@ namespace CLTools\CLData;
 				
 				return true;
 			}
-			
+
 			// not approved >:|
 			throw new \Exception('invalid data field provided');
 		}

@@ -229,8 +229,8 @@ Statscream.fetchChartData = function(apiUrl, dataSetName, chartWrapperSelector, 
 				for(i = 0;i < apiData.result.length;i++)
 				{
 					// split results into two arrays: one containing the keys and one containing the values
-					labels.push(apiData.result[i][0].text());
-					data.push(apiData.result[i][1].text());
+					labels.push(apiData.result[i][0]);
+					data.push(apiData.result[i][1]);
 				}
 
 				// create chart
