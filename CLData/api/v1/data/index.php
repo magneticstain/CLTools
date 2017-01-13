@@ -13,7 +13,7 @@ namespace CLTools;
 
 	/*
 	 *  QUERY STRUCTURE (URL)
-	 *      /{VERSION}/data/{FIELD}/?{OPTIONS}
+	 *      /{VERSION}/data/?{FIELD}&{OPTIONS}
 	 */
 
 	// import config(s) and libraries

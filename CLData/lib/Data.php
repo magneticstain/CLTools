@@ -96,8 +96,7 @@ namespace CLTools\CLData;
 				}
 			}
 
-			// return all info if a blank or general field name is specified and there's a single record
-//			var_dump($dataSet);
+			// return all info if a blank or general field name is specified AND there's a single record
 			if($this->dataField === '' || $this->dataField === '*' || 1 < count($dataSet))
 			{
 				return $dataSet;
@@ -211,13 +210,32 @@ namespace CLTools\CLData;
 			// check if db is empty
 			if($this->getTotalNumberOfListings() === 0)
 			{
-				// no listings available, don't bother doing anything else and set data as blank array and exit the function
+				// no listings available. set data as blank array and exit the function
 				$this->data = [];
 				return;
 			}
 
-			// list and set approved sort and sort order options
-			// user can also sort by field numbers
+			// verify and set a specific data field to return, if requested
+            $sqlSelectClause = 'listing_id';
+            // check if all fields were requested or a specific one
+            if(empty($this->dataField) || $this->dataField === '*' || $this->dataField === 'listing_id')
+            {
+                // all fields requested
+                $sqlSelectClause = '*';
+            }
+            else
+            {
+                // specific field requested
+                $approvedFields = ['post_date', 'url', 'location', 'price', 'name', 'geotag'];
+                if(in_array(strtolower($this->dataField), $approvedFields, true))
+                {
+                    // field is approved
+                    $sqlSelectClause .= ', '.$this->dataField;
+                }
+            }
+
+            // confirm and set sort option and sort order
+			// DEV NOTE: user can also sort by field numbers
 			$approvedSortOpts = ['listing_id', 'post_date', 'location', 'price'];
 			$approvedSortOrderOpts = ['asc', 'desc'];
 			$sortSqlClause = '';
@@ -234,7 +252,7 @@ namespace CLTools\CLData;
 			
 			// validate given limit
 			$limitSqlClause = '';
-			if(0 < $resultLimit)
+			if(filter_var($resultLimit, FILTER_VALIDATE_INT) && 0 < $resultLimit)
 			{
 				$limitSqlClause = 'LIMIT '.$resultLimit;
 			}
@@ -244,17 +262,6 @@ namespace CLTools\CLData;
 			if(strtolower($this->listingID === 'all'))
 			{
 				// all listings requested
-				// check if all fields were requested or a specific one
-				if(!empty($this->dataField) && $this->dataField !== '*' && $this->dataField !== 'listing_id')
-				{
-					$sqlSelectClause = 'listing_id, '.$this->dataField;
-				}
-				else
-				{
-					$sqlSelectClause = '*';
-				}
-
-				// fetch all (max 5k) listings
 				$sql = '
 						SELECT
 							'.$sqlSelectClause.'
@@ -278,7 +285,7 @@ namespace CLTools\CLData;
 				// fetch all data for specific listing
 				$sql = '
 						SELECT
-							*
+							'.$sqlSelectClause.'
 						FROM
 							listings
 						WHERE
