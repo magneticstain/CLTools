@@ -59,7 +59,7 @@ ln -s /opt/cltools/ /var/www/html/CLTools
 
 ##### Sample Apache Config
 Here is an example Apache config that you may want to base your configuration file off of. The only requirement is the clause `AllowOverride All`;
-this is needed for htaccess logic to work correctly:
+this is needed for `.htaccess` logic to work correctly:
 ```apacheconfig
 <IfModule mod_ssl.c>
     <VirtualHost _default_:443>
