@@ -313,6 +313,7 @@ namespace CLTools\CLData;
 							*
 						FROM
 							listings
+						'.$sortSqlClause.'
 						LIMIT 5
 				';
 

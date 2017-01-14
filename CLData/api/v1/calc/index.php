@@ -84,6 +84,17 @@ namespace CLTools;
 	try {
 		// generate options
 		$options = generateOptions();
+
+		// check for db config options
+		if(!isset($DB_CONFIG_OPTIONS))
+		{
+            error_log('CLTools :: CLData - CALC :: [ SEV: FATAL ] :: could not start calculation engine :: [ MSG: database configuration options not found ]');
+
+            // throw 503 status
+            http_response_code(503);
+
+            exit(1);
+		}
 		
 		$calc = new CLData\Calc(
 			$DB_CONFIG_OPTIONS,

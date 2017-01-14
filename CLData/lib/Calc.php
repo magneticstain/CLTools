@@ -22,7 +22,7 @@ namespace CLTools\CLData;
 			$dataField = 'price',
 			$searchString = '')
 		{
-			// no sanatizing needed, results will be verified as they're utilized within functions
+			// not much sanatizing needed, results will be verified as they're utilized within functions
 			parent::__construct($dbConfig);
 			$this->setMeasurementType($measurement);
 			$this->setDataField($dataField);
@@ -136,17 +136,35 @@ namespace CLTools\CLData;
 			// check if searchString is set
 			if(!empty($this->searchString))
 			{
+			    // DEV NOTE: for whatever reason, using I'm unable to get this query to work by using aliases. Will leave the code in case someone can find the issue
 				// append searchString SQL clause
-				$sql .= '
-					WHERE
+//				$sql .= ' WHERE
+//						(
+//							listing_id = :searchString
+//							OR url LIKE :wcSearchString
+//							OR location LIKE :wcSearchString
+//							OR name LIKE :wcSearchString
+//						)';
+
+//                $sqlParams['searchString'] = $this->searchString;
+//				$sqlParams['wcSearchString'] = '%'.$this->searchString.'%';
+
+
+                $sql .= ' WHERE
 						(
-							listing_id = :searchString
-							OR url like (%:searchString%)
-							OR location like (%:searchString%)
-							or name like (%:searchString%)
+							listing_id = ?
+							OR url LIKE ?
+							OR location LIKE ?
+							OR name LIKE ?
 						)';
-				
-				$sqlParams['searchString'] = $this->searchString;
+
+                $wcSearchString = '%'.$this->searchString.'%';
+                $sqlParams = [
+                    $this->searchString,
+                    $wcSearchString,
+                    $wcSearchString,
+                    $wcSearchString
+                ];
 			}
 			
 			// add sort and limit clauses if set and needed
@@ -172,6 +190,8 @@ namespace CLTools\CLData;
 			}
 			
 			// init stmt and execute
+//            var_dump($sqlParams);
+//			echo $sql;
 			$stmt = $this->dbConn->prepare($sql);
 			$stmt->execute($sqlParams);
 			
@@ -199,7 +219,6 @@ namespace CLTools\CLData;
 			
 			// set result array as data
 			parent::setData($result);
-			
 		}
 	}
 ?>
