@@ -165,6 +165,7 @@ namespace CLTools\CLData;
 			
 			// generate sql
 			$sql = '
+                    /* CLData :: Data :: Get total number of listings */
 					SELECT
 						COUNT(*) as count
 					FROM
@@ -263,6 +264,7 @@ namespace CLTools\CLData;
 			{
 				// all listings requested
 				$sql = '
+                        /* CLData :: Data :: Fetching large listing set */
 						SELECT
 							'.$sqlSelectClause.'
 						FROM
@@ -284,6 +286,7 @@ namespace CLTools\CLData;
 			{
 				// fetch all data for specific listing
 				$sql = '
+                        /* CLData :: Data :: Fetching single listing */
 						SELECT
 							'.$sqlSelectClause.'
 						FROM
@@ -309,6 +312,7 @@ namespace CLTools\CLData;
 			{
 				// no listing ID set, retrieve default: last 5 listings by date
 				$sql = '
+                        /* CLData :: Data :: Fetching default listing set */
 						SELECT
 							*
 						FROM

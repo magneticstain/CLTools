@@ -114,7 +114,9 @@ namespace CLTools\CLData;
 			$lcMeasurement = strtolower($this->measurement);
 			
 			// generate sql for calculation based on measurement and data field
-			$sql = '';
+			$sql = '
+                    /* CLData :: Calc :: Calculate listing measurement */
+            ';
 			if($lcMeasurement === 'count')
 			{
 				// append clause to add data field as index
@@ -138,16 +140,18 @@ namespace CLTools\CLData;
 			{
 			    // DEV NOTE: for whatever reason, using I'm unable to get this query to work by using aliases. Will leave the code in case someone can find the issue
 				// append searchString SQL clause
-//				$sql .= ' WHERE
-//						(
-//							listing_id = :searchString
-//							OR url LIKE :wcSearchString
-//							OR location LIKE :wcSearchString
-//							OR name LIKE :wcSearchString
-//						)';
+                /*
+				$sql .= ' WHERE
+						(
+							listing_id = :searchString
+							OR url LIKE :wcSearchString
+							OR location LIKE :wcSearchString
+							OR name LIKE :wcSearchString
+						)';
 
-//                $sqlParams['searchString'] = $this->searchString;
-//				$sqlParams['wcSearchString'] = '%'.$this->searchString.'%';
+                $sqlParams['searchString'] = $this->searchString;
+				$sqlParams['wcSearchString'] = '%'.$this->searchString.'%';
+                */
 
 
                 $sql .= ' WHERE

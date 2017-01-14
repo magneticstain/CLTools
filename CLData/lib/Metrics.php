@@ -187,6 +187,7 @@ namespace CLTools\CLData;
 			
 			// generate sql to scan the database for all timespans
 			$sql = '
+                    /* CLData :: Metrics :: Get list of counts for all listing timestamps */
 					SELECT
 						left(post_date, ?),
 						count(*) as count_'.$this->timespan.'
@@ -254,6 +255,7 @@ namespace CLTools\CLData;
 			
 			// concatonate full sql query
 			return '
+                        /* CLData :: Metrics :: Generate listing metrics */
 						SELECT
 							'.$sqlSelectClause.'
 						FROM
