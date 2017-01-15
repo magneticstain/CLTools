@@ -194,8 +194,6 @@ namespace CLTools\CLData;
 			}
 			
 			// init stmt and execute
-//            var_dump($sqlParams);
-//			echo $sql;
 			$stmt = $this->dbConn->prepare($sql);
 			$stmt->execute($sqlParams);
 			
