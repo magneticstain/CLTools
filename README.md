@@ -12,7 +12,7 @@ Demo: https://dev.carlso.net/CLTools/CLWeb/
 ## Requirements
 ### OS
 * Debian 6<=
-* RHEL/CentOS 6<=
+* Ubuntu 14.04<=
 
 ### Software
 * Apache
